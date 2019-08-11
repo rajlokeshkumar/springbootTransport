@@ -68,7 +68,15 @@ private Date tripEndDate;
 
 private BigDecimal totalBilledExpense;
 
+private BigDecimal otherExpense;
 
+public BigDecimal getOtherExpense() {
+	return otherExpense;
+}
+
+public void setOtherExpense(BigDecimal otherExpense) {
+	this.otherExpense = otherExpense;
+}
 
 public BigDecimal getTotalBilledExpense() {
 	return totalBilledExpense;

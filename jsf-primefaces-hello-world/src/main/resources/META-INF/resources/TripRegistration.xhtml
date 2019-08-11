@@ -25,505 +25,417 @@
 	<h1>Register a Trip</h1>
 	<h:panelGrid columns="1" border="0">
 		<h:panelGroup id="view" layout="block">
-			
-				<h:form id="tripRegister">
-					<h:panelGrid columns="2" border='0' style="margin-left:10px">
-						<h:panelGrid columns="4" border='0' style="margin-left:10px">
-							<label>வண்டி எண்</label>
-							<p:selectOneMenu
-								value="#{tripRegistrationController.tripRegisterDto.vechileNumber}">
-								<f:selectItems value="#{tripRegistrationController.driverName}" />
-							</p:selectOneMenu>
-							<label>வண்டி அட்வான்ஸ்</label>
-							<h:inputText id="vehicleAdvance"
-								value="#{tripRegistrationController.tripRegisterDto.vehicleAdvance}"
-								required="true" requiredMessage="VehicleAdvance is Mandatory"
-								converterMessage="Enter a valid x" styleClass="inputtextboxBig">
-								<f:ajax event="change"
-									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-									render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
 
-							<label>டிரைவர் 1</label>
-							<h:inputText id="driverName1" required="true"
-								requiredMessage="DriverName is mandatory"
-								validatorMessage="Enter a valid Driver Name"
-								value="#{tripRegistrationController.tripRegisterDto.driverName1}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>
-							<label>சரக்கின் பெயர்</label>
-							<h:inputText id="loadName"
-								validatorMessage="Enter a valid Goods name"
-								value="#{tripRegistrationController.tripRegisterDto.goodsName}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>-
+			<h:form id="tripRegister">
+				<h:panelGrid columns="2" border='0' style="margin-left:10px">
+					<h:panelGrid columns="4" border='0' style="margin-left:10px">
+						<label>வண்டி எண்</label>
+						<h:selectOneMenu styleClass="inputtextboxBig"
+							value="#{tripRegistrationController.tripRegisterDto.vechileNumber}">
+							<f:selectItems value="#{tripRegistrationController.vehicleNo}" />
+						</h:selectOneMenu>
+						<label>வண்டி அட்வான்ஸ்</label>
+						<h:inputText id="vehicleAdvance"
+							value="#{tripRegistrationController.tripRegisterDto.vehicleAdvance}"
+							required="true" requiredMessage="VehicleAdvance is Mandatory"
+							converterMessage="Enter a valid x" styleClass="inputtextboxBig">
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+						</h:inputText>
 
+						<label>டிரைவர் 1</label>
+						<h:selectOneMenu styleClass="inputtextboxBig" id="driverName1"
+							value="#{tripRegistrationController.tripRegisterDto.driverName1}">
+							<f:selectItems value="#{tripRegistrationController.driverName}" />
+						</h:selectOneMenu>
 
+						<label>சரக்கின் பெயர்</label>
+
+						<h:inputText id="loadName"
+							validatorMessage="Enter a valid Goods name"
+							value="#{tripRegistrationController.tripRegisterDto.goodsName}"
+							styleClass="inputtextboxBig">
+							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
+						</h:inputText>-
 						<label>டிரைவர் 2</label>
-							<h:inputText id="driverName2"
-								validatorMessage="Enter a valid driver name"
-								value="#{tripRegistrationController.tripRegisterDto.driverName2}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>
-							<label>எடை(டண்)</label>
-							<h:inputText id="totalWeight" required="true"
-								converterMessage="Enter a valid Total weight"
-								requiredMessage="Total weight with Goods is mandatory"
-								value="#{tripRegistrationController.tripRegisterDto.goodsTotalWeight}"
-								styleClass="inputtextboxBig">
+						<h:selectOneMenu styleClass="inputtextboxBig" id="driverName2"
+							value="#{tripRegistrationController.tripRegisterDto.driverName2}">
+							<f:selectItems value="#{tripRegistrationController.driverName}" />
+						</h:selectOneMenu>
+						<label>எடை(டண்)</label>
+						<h:inputText id="totalWeight" required="true"
+							converterMessage="Enter a valid Total weight"
+							requiredMessage="Total weight with Goods is mandatory"
+							value="#{tripRegistrationController.tripRegisterDto.goodsTotalWeight}"
+							styleClass="inputtextboxBig">
+						</h:inputText>
 
-							</h:inputText>
-
-							<label>கிளினர் பெயர் </label>
-							<h:inputText id="cleanerName"
-								validatorMessage="Enter a valid cleaner name"
-								value="#{tripRegistrationController.tripRegisterDto.cleanerName}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>
-							<label>வாடகை</label>
-							<h:inputText id="hirePrice" required="true"
-								requiredMessage="Hire price for truck is mandatory"
-								converterMessage="Enter a valid Hire price"
-								value="#{tripRegistrationController.tripRegisterDto.hireprice}"
-								styleClass="inputtextboxBig">
-								<f:ajax event="change"
-									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-									render=":tripRegister:commission :tripRegister:cleanerWage :tripRegister:totaldriverWage :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
-
-
-
-							<label>புரப்படும் இடம்</label>
-							<h:inputText id="startplace" required="true"
-								requiredMessage="Start place of trip is mandatory"
-								validatorMessage="Enter the valid start place"
-								value="#{tripRegistrationController.tripRegisterDto.startPlace}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>
-							<label>லோடு அட்வான்ஸ்</label>
-							<h:inputText id="loadAdvance"
-								converterMessage="Enter the valid Load Advance amount"
-								value="#{tripRegistrationController.tripRegisterDto.amountpaidonLoad}"
-								styleClass="inputtextboxBig">
-							</h:inputText>
-							<label>சேரூம் இடம்</label>
-							<h:inputText id="endplace" required="true"
-								requiredMessage="Endplace of trip is mandatory"
-								validatorMessage="Enter the valid Endplace"
-								value="#{tripRegistrationController.tripRegisterDto.endPlace}"
-								styleClass="inputtextboxBig">
-								<f:validateRegex pattern="^[a-zA-Z0-9]*" />
-							</h:inputText>
-							<label>ரிட்டன் வாடகை</label>
-							<h:inputText id="Remaininghireprice"
-								converterMessage="Enter the valid Remaining Hire price"
-								value="#{tripRegistrationController.tripRegisterDto.amountPaidonOffload}"
-								styleClass="inputtextboxBig">
-							</h:inputText>
-							<label>புரப்படும் தேதி</label>
-							<p:calendar id="tripStartDate" pattern="dd-MMM-yyyy"
-								value="#{tripRegistrationController.tripRegisterDto.tripStartDate}">
-							</p:calendar>
-							<label>சேரூம் தேதி</label>
-							<p:calendar id="tripEndDate" pattern="dd-MMM-yyyy"
-								value="#{tripRegistrationController.tripRegisterDto.tripEndDate}">
-							</p:calendar>
-							<p:messages
-								for="VehicleNumber,vehicleAdvance,driverName1,driverName2,loadName,totalWeight,cleanerName,
+						<label>கிளினர் பெயர் </label>
+						<h:inputText id="cleanerName"
+							validatorMessage="Enter a valid cleaner name"
+							value="#{tripRegistrationController.tripRegisterDto.cleanerName}"
+							styleClass="inputtextboxBig">
+							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
+						</h:inputText>
+						<label>வாடகை</label>
+						<h:inputText id="hirePrice" required="true"
+							requiredMessage="Hire price for truck is mandatory"
+							converterMessage="Enter a valid Hire price"
+							value="#{tripRegistrationController.tripRegisterDto.hireprice}"
+							styleClass="inputtextboxBig">
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:commission :tripRegister:cleanerWage :tripRegister:totaldriverWage :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+						</h:inputText>
+						<label>புரப்படும் இடம்</label>
+						<h:inputText id="startplace" required="true"
+							requiredMessage="Start place of trip is mandatory"
+							validatorMessage="Enter the valid start place"
+							value="#{tripRegistrationController.tripRegisterDto.startPlace}"
+							styleClass="inputtextboxBig">
+							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
+						</h:inputText>
+						<label>லோடு அட்வான்ஸ்</label>
+						<h:inputText id="loadAdvance"
+							converterMessage="Enter the valid Load Advance amount"
+							value="#{tripRegistrationController.tripRegisterDto.amountpaidonLoad}"
+							styleClass="inputtextboxBig">
+						</h:inputText>
+						<label>சேரூம் இடம்</label>
+						<h:inputText id="endplace" required="true"
+							requiredMessage="Endplace of trip is mandatory"
+							validatorMessage="Enter the valid Endplace"
+							value="#{tripRegistrationController.tripRegisterDto.endPlace}"
+							styleClass="inputtextboxBig">
+							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
+						</h:inputText>
+						<label>ரிட்டன் வாடகை</label>
+						<h:inputText id="Remaininghireprice"
+							converterMessage="Enter the valid Remaining Hire price"
+							value="#{tripRegistrationController.tripRegisterDto.amountPaidonOffload}"
+							styleClass="inputtextboxBig">
+						</h:inputText>
+						<label>புரப்படும் தேதி</label>
+						<p:calendar id="tripStartDate" pattern="dd-MMM-yyyy"
+							value="#{tripRegistrationController.tripRegisterDto.tripStartDate}">
+						</p:calendar>
+						<label>சேரூம் தேதி</label>
+						<p:calendar id="tripEndDate" pattern="dd-MMM-yyyy"
+							value="#{tripRegistrationController.tripRegisterDto.tripEndDate}">
+						</p:calendar>
+						<p:messages
+							for="VehicleNumber,vehicleAdvance,driverName1,driverName2,loadName,totalWeight,cleanerName,
 							hirePrice,startplace,loadAdvance,endplace,Remaininghireprice" />
-						</h:panelGrid>
-						<p:dataTable id="totalAdvance" var="vehicle"
-							value="#{tripRegistrationController.totalAdvance}"
-							editable="true" style="margin-bottom:20px">
-							<f:facet name="header">
+					</h:panelGrid>
+					<p:dataTable id="totalAdvance" var="advance"
+						value="#{tripRegistrationController.totalAdvance}" editable="true"
+						style="margin-bottom:20px">
+						<f:facet name="header">
          							மொத்த அட்வான்ஸ்
       						 </f:facet>
+						<p:ajax event="rowEdit"
+							listener="#{tripRegistrationController.onRowEdit}"
+							update=":tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+						<p:ajax event="rowEditCancel"
+							listener="#{tripRegistrationController.onRowCancel}"
+							update=":tripRegister:msgs" />
 
-							<p:ajax event="rowEdit"
-								listener="#{tripRegistrationController.onRowEdit}"
-								update=":tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
-							<p:ajax event="rowEditCancel"
-								listener="#{tripRegistrationController.onRowCancel}"
-								update=":tripRegister:msgs" />
 
+						<p:column headerText="தேவை">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{advance.purpose}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{advance.purpose}" style="width:100%"
+										label="Purpose" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="பணம்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{advance.amount}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{advance.amount}" style="width:100%"
+										label="Amount" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="தேவை">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.purpose}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{vehicle.purpose}" style="width:100%"
-											label="Purpose" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column headerText="பணம்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.amount}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{vehicle.amount}" style="width:100%"
-											label="Amount" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column style="width:32px">
+							<p:rowEditor />
+						</p:column>
+					</p:dataTable>
 
-							<p:column style="width:32px">
-								<p:rowEditor />
-							</p:column>
-						</p:dataTable>
+				</h:panelGrid>
+				<p:growl id="msgs" showDetail="true" />
+				<h:panelGrid columns="2" border="0">
 
-					</h:panelGrid>
-					<p:growl id="msgs" showDetail="true" />
-					<h:panelGrid columns="2" border="0">
-
-						<p:dataTable id="Fuel1" var="vehicle"
-							value="#{tripRegistrationController.fuelDtoForTable}"
-							editable="true" style="margin-bottom:20px">
-							<f:facet name="header">
+					<p:dataTable id="Fuel1" var="vehicle"
+						value="#{tripRegistrationController.fuelDtoForTable}"
+						editable="true" style="margin-bottom:20px">
+						<f:facet name="header">
          							 டிசல்
       						 </f:facet>
 
-							<p:ajax event="rowEdit"
-								listener="#{tripRegistrationController.onRowEdit}"
-								update=":tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
-							<p:ajax event="rowEditCancel"
-								listener="#{tripRegistrationController.onRowCancel}"
-								update=":tripRegister:msgs" />
+						<p:ajax event="rowEdit"
+							listener="#{tripRegistrationController.onRowEdit}"
+							update=":tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+						<p:ajax event="rowEditCancel"
+							listener="#{tripRegistrationController.onRowCancel}"
+							update=":tripRegister:msgs" />
 
-							<p:column headerText="தேதி">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.dateOfTransaction}">
-											<f:convertDateTime pattern="dd-MMM-yyyy" />
-										</h:outputText>
-									</f:facet>
-									<f:facet name="input">
-										<p:calendar value="#{vehicle.dateOfTransaction}"
-											pattern="dd-MMM-yyyy" style="width:100%" label="Date" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="தேதி">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.dateOfTransaction}">
+										<f:convertDateTime pattern="dd-MMM-yyyy" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:calendar value="#{vehicle.dateOfTransaction}"
+										pattern="dd-MMM-yyyy" style="width:100%" label="Date" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="இடம்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.placeoffuel}" />
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu value="#{vehicle.placeoffuel}"
-											style="width:100%">
-											<f:selectItems
-												value="#{tripRegistrationController.listOfStates}" var="man"
-												itemLabel="#{man}" itemValue="#{man}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="இடம்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.placeoffuel}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{vehicle.placeoffuel}"
+										style="width:100%">
+										<f:selectItems
+											value="#{tripRegistrationController.listOfStates}" var="man"
+											itemLabel="#{man}" itemValue="#{man}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="லிட்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.numberofLitre}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{vehicle.numberofLitre}"
-											style="width:100%" label="NumberOfLitre" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="லிட்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.numberofLitre}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{vehicle.numberofLitre}"
+										style="width:100%" label="NumberOfLitre" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="Rs/லிட்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.pricePerlitre}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{vehicle.pricePerlitre}"
-											style="width:100%" label="PricePerLitre" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="Rs/லிட்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.pricePerlitre}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{vehicle.pricePerlitre}"
+										style="width:100%" label="PricePerLitre" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="மொத்த பணம்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.totalAmount}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{vehicle.totalAmount}" style="width:100%"
-											label="TotalAmount" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="மொத்த பணம்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.totalAmount}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{vehicle.totalAmount}" style="width:100%"
+										label="TotalAmount" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
 
-							<p:column headerText="பணம் செலுத்திய முரை">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{vehicle.paymentMode}" />
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu value="#{vehicle.paymentMode}"
-											style="width:100%">
-											<f:selectItems
-												value="#{tripRegistrationController.paymentType}" var="man"
-												itemLabel="#{man}" itemValue="#{man}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="பணம் செலுத்திய முரை">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{vehicle.paymentMode}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{vehicle.paymentMode}"
+										style="width:100%">
+										<f:selectItems
+											value="#{tripRegistrationController.paymentType}" var="man"
+											itemLabel="#{man}" itemValue="#{man}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column style="width:32px">
-								<p:rowEditor />
-							</p:column>
-						</p:dataTable>
-						<p:dataTable id="AtmCreditDebit" var="atm"
-							value="#{tripRegistrationController.atmCreditDebitDto}"
-							editable="true" style="margin-bottom:20px">
-							<f:facet name="header">
+						<p:column style="width:32px">
+							<p:rowEditor />
+						</p:column>
+					</p:dataTable>
+					<p:dataTable id="AtmCreditDebit" var="atm"
+						value="#{tripRegistrationController.atmCreditDebitDto}"
+						editable="true" style="margin-bottom:20px">
+						<f:facet name="header">
          							 Atm வரவு,செலவு
       						 </f:facet>
 
-							<p:ajax event="rowEdit"
-								listener="#{tripRegistrationController.onRowEdit}"
-								update=":tripRegister:msgs,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
-							<p:ajax event="rowEditCancel"
-								listener="#{tripRegistrationController.onRowCancel}"
-								update=":tripRegister:msgs" />
+						<p:ajax event="rowEdit"
+							listener="#{tripRegistrationController.onRowEdit}"
+							update=":tripRegister:msgs,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+						<p:ajax event="rowEditCancel"
+							listener="#{tripRegistrationController.onRowCancel}"
+							update=":tripRegister:msgs" />
 
 
-							<p:column headerText="தேதி">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{atm.date}">
-											<f:convertDateTime pattern="dd-MMM-yyyy" />
-										</h:outputText>
-									</f:facet>
-									<f:facet name="input">
-										<p:calendar id="expenseBilledDate" pattern="dd-MMM-yyyy"
-											value="#{atm.date}" style="width:100%" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column headerText="பணம்">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{atm.amount}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText id="amount" value="#{atm.amount}"
-											style="width:100%" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
+						<p:column headerText="தேதி">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{atm.date}">
+										<f:convertDateTime pattern="dd-MMM-yyyy" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:calendar id="expenseBilledDate" pattern="dd-MMM-yyyy"
+										value="#{atm.date}" style="width:100%" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="பணம்">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{atm.amount}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText id="amount" value="#{atm.amount}"
+										style="width:100%" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-							<p:column headerText="பணம் செலுத்திய முரை">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{atm.paymentMode}" />
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu value="#{atm.paymentMode}" style="width:100%">
-											<f:selectItems
-												value="#{tripRegistrationController.paymentType}" var="man"
-												itemLabel="#{man}" itemValue="#{man}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column style="width:32px">
-								<p:rowEditor />
-							</p:column>
-						</p:dataTable>
-					</h:panelGrid>
+						<p:column headerText="பணம் செலுத்திய முரை">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{atm.paymentMode}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{atm.paymentMode}" style="width:100%">
+										<f:selectItems
+											value="#{tripRegistrationController.paymentType}" var="man"
+											itemLabel="#{man}" itemValue="#{man}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column style="width:32px">
+							<p:rowEditor />
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
 
-					<p:panelGrid columns="1">
+				<p:panelGrid columns="3">
 
-						<p:dataTable id="ExpenseOnRTOandToll" var="tollExpense"
-							value="#{tripRegistrationController.expenseonRTOandTOLL}"
-							editable="true" style="margin-bottom:20px">
-							<f:facet name="header">
-         							  Expense on Toll and RTO
-      						 </f:facet>
+					<p:panelGrid columns="2">
 
-							<p:ajax event="rowEdit"
-								listener="#{tripRegistrationController.onRowEdit}"
-								update="ExpenseOnRTOandToll,:tripRegister:msgs,:tripRegister:expenseOnRTO,:tripRegister:totalTollExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
-							<p:ajax event="rowEditCancel"
-								listener="#{tripRegistrationController.onRowCancel}"
-								update=":tripRegister:msgs" />
+						<h:outputLabel value="கமிசன் பில்படி" styleClass="LabelforSummary" />
+						<h:inputText id="commission" disabled="true"
+							value="#{tripRegistrationController.tripRegisterDto.commissionAsBilled}"
+							styleClass="inputtextboxBig" />
+						<h:outputLabel value="TotalFuelExpense"
+							styleClass="LabelforSummary" />
+						<h:inputText id="totalFuelExpense" disabled="true"
+							value="#{tripRegistrationController.tripRegisterDto.totalDieselAmount}"
+							styleClass="inputtextboxBig" />
+						<h:outputLabel value="டிரைவர்கள் படி" styleClass="LabelforSummary" />
+						<h:inputText id="totaldriverWage" disabled="true"
+							value="#{tripRegistrationController.tripRegisterDto.totalDriverWageForTrip}"
+							styleClass="inputtextboxBig" />
+						<h:outputLabel value="கிளீனர் படி" styleClass="LabelforSummary" />
+						<h:inputText id="cleanerWage" disabled="true"
+							value="#{tripRegistrationController.tripRegisterDto.cleanerWage}"
+							styleClass="inputtextboxBig" />
+						<h:outputLabel value="Other Expense" styleClass="LabelforSummary" />
+						<h:inputText id="otherExpense" disabled="false"
+							value="#{tripRegistrationController.tripRegisterDto.otherExpense}"
+							styleClass="inputtextboxBig" >
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
 
-							<p:column headerText="Date of Expense">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{tollExpense.expenseDate}">
-											<f:convertDateTime pattern="dd-MMM-yyyy" />
-										</h:outputText>
-									</f:facet>
-
-									<f:facet name="input">
-										<p:calendar value="#{tollExpense.expenseDate}"
-											pattern="dd-MMM-yyyy"></p:calendar>
-
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-
-
-							<p:column headerText="Place of Expense">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{tollExpense.placeofExpense}" />
-									</f:facet>
-
-									<f:facet name="input">
-										<h:selectOneMenu value="#{tollExpense.placeofExpense}"
-											style="width:100%">
-											<f:selectItems
-												value="#{tripRegistrationController.listOfStates}" var="man"
-												itemLabel="#{man}" itemValue="#{man}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-
-							<p:column headerText="Amount of Expense">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{tollExpense.amountOfExpense}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{tollExpense.amountOfExpense}"
-											style="width:50%" label="Amount of Expense" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-
-							<p:column headerText="State of Expense">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{tollExpense.stateofExpense}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText value="#{tollExpense.stateofExpense}"
-											style="width:50%" label="State of Expense" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-
-							<p:column headerText="Expense Type">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{tollExpense.expenseType}" />
-									</f:facet>
-
-									<f:facet name="input">
-										<h:selectOneMenu value="#{tollExpense.expenseType}"
-											style="width:100%">
-											<f:selectItems
-												value="#{tripRegistrationController.typeOfExpense}"
-												var="man" itemLabel="#{man}" itemValue="#{man}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column style="width:32px">
-								<p:rowEditor />
-							</p:column>
-						</p:dataTable>
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<h:outputLabel value="TotalRTOExpense"
+							styleClass="LabelforSummary" />
+						<h:inputText id="expenseOnRTO" disabled="false"
+							value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
+							styleClass="inputtextboxBig" >
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+						<h:outputLabel value="ஏற்று மாமுல்" styleClass="LabelforSummary" />
+						<h:inputText
+							value="#{tripRegistrationController.tripRegisterDto.expenseForLoading}"
+							styleClass="inputtextboxBig">
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+						</h:inputText>
+						<h:outputLabel value="இறக்கு மாமுல்" styleClass="LabelforSummary" />
+						<h:inputText
+							value="#{tripRegistrationController.tripRegisterDto.expenseForunloading}"
+							styleClass="inputtextboxBig">
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+						</h:inputText>
+						<h:outputLabel value="TOLL Expense" styleClass="LabelforSummary" />
+						<h:inputText id="totalTollExpense" disabled="false"
+							value="#{tripRegistrationController.tripRegisterDto.totalTollExpense}"
+							styleClass="inputtextboxBig" >
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+						<h:outputLabel value="Total Billed Expense"
+							styleClass="LabelforSummary" />
+						<h:inputText id="totalBilledExpense" disabled="false"
+							value="#{tripRegistrationController.tripRegisterDto.totalBilledExpense}"
+							styleClass="inputtextboxBig" >
+							<f:ajax event="change"
+								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
 					</p:panelGrid>
 
-					<p:panelGrid columns="3">
+					<p:panelGrid columns="2" styleClass="styleForOutputtext">
 
-						<p:panelGrid columns="2">
-
-							<h:outputLabel value="கமிசன் பில்படி"
-								styleClass="LabelforSummary" />
-							<h:inputText id="commission" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.commissionAsBilled}"
-								styleClass="inputtextboxBig" />
-							<h:outputLabel value="TotalFuelExpense"
-								styleClass="LabelforSummary" />
-							<h:inputText id="totalFuelExpense" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.totalDieselAmount}"
-								styleClass="inputtextboxBig" />
-							<h:outputLabel value="டிரைவர்கள் படி"
-								styleClass="LabelforSummary" />
-							<h:inputText id="totaldriverWage" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.totalDriverWageForTrip}"
-								styleClass="inputtextboxBig" />
-							<h:outputLabel value="கிளீனர் படி" styleClass="LabelforSummary" />
-							<h:inputText id="cleanerWage" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.cleanerWage}"
-								styleClass="inputtextboxBig" />
-
-						</p:panelGrid>
-						<p:panelGrid columns="2">
-							<h:outputLabel value="TotalRTOExpense"
-								styleClass="LabelforSummary" />
-							<h:inputText id="expenseOnRTO" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
-								styleClass="inputtextboxBig" />
-							<h:outputLabel value="ஏற்று மாமுல்" styleClass="LabelforSummary" />
-							<h:inputText
-								value="#{tripRegistrationController.tripRegisterDto.expenseForLoading}"
-								styleClass="inputtextboxBig">
-								<f:ajax event="change"
-									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-									render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
-							<h:outputLabel value="இறக்கு மாமுல்" styleClass="LabelforSummary" />
-							<h:inputText
-								value="#{tripRegistrationController.tripRegisterDto.expenseForunloading}"
-								styleClass="inputtextboxBig">
-								<f:ajax event="change"
-									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-									render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
-							<h:outputLabel value="TOLL Expense" styleClass="LabelforSummary" />
-							<h:inputText id="totalTollExpense" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.totalTollExpense}"
-								styleClass="inputtextboxBig" />
-							<h:outputLabel value="Total Billed Expense"
-								styleClass="LabelforSummary" />
-							<h:inputText id="totalBilledExpense" disabled="true"
-								value="#{tripRegistrationController.tripRegisterDto.totalBilledExpense}"
-								styleClass="inputtextboxBig" />
-						</p:panelGrid>
-
-						<p:panelGrid columns="2" styleClass="styleForOutputtext">
-
-							<h:outputLabel value="TotalTripExpense"
-								styleClass="LabelforSummary" />
-							<h:inputText styleClass="inputtextboxBig"
-								id="totalExpenseForTrip"
-								value="#{tripRegistrationController.tripRegisterDto.totalExpenseForTrip}"
-								disabled="true" />
-							<h:outputLabel value="TotalHirePrice"
-								styleClass="LabelforSummary" />
-							<h:inputText styleClass="inputtextboxBig"
-								id="totalIncomewithAdvance"
-								value="#{tripRegistrationController.tripRegisterDto.totalIncome}"
-								disabled="true" />
-							<h:outputLabel value="ProfitOnTrip" styleClass="LabelforSummary" />
-							<h:inputText styleClass="inputtextboxBig" id="totalProfitOnTrip"
-								value="#{tripRegistrationController.tripRegisterDto.totalprofitOnTrip}"
-								disabled="true" />
-						</p:panelGrid>
+						<h:outputLabel value="TotalTripExpense"
+							styleClass="LabelforSummary" />
+						<h:inputText styleClass="inputtextboxBig" id="totalExpenseForTrip"
+							value="#{tripRegistrationController.tripRegisterDto.totalExpenseForTrip}"
+							disabled="true" />
+						<h:outputLabel value="TotalHirePrice" styleClass="LabelforSummary" />
+						<h:inputText styleClass="inputtextboxBig"
+							id="totalIncomewithAdvance"
+							value="#{tripRegistrationController.tripRegisterDto.totalIncome}"
+							disabled="true" />
+						<h:outputLabel value="ProfitOnTrip" styleClass="LabelforSummary" />
+						<h:inputText styleClass="inputtextboxBig" id="totalProfitOnTrip"
+							value="#{tripRegistrationController.tripRegisterDto.totalprofitOnTrip}"
+							disabled="true" />
 					</p:panelGrid>
-					<h:commandButton
-						action="#{tripRegistrationController.processButton()}"
-						value="test" />
-					<h:messages globalOnly="true" />
-				</h:form>
+				</p:panelGrid>
+				
+				<h:commandButton value="submit" styleClass="myButton" 
+					action="#{tripRegistrationController.processButton()}">
+
+				</h:commandButton>
+				<h:messages globalOnly="true" />
+			</h:form>
 		</h:panelGroup>
 	</h:panelGrid>
 </body>

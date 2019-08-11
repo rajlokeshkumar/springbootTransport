@@ -16,9 +16,9 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.inject.Named;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -30,8 +30,10 @@ import com.codenotfound.dto.ExpenseonRTOandTOLLDto;
 import com.codenotfound.dto.FuelDto;
 import com.codenotfound.dto.TripRegisterDto;
 import com.codenotfound.entity.DriverInfo;
+import com.codenotfound.entity.TripRegister;
 import com.codenotfound.entity.Vehicle;
 import com.codenotfound.repo.DriverInfoRepo;
+import com.codenotfound.repo.TripRegisterRepository;
 import com.codenotfound.repo.VehicleRepository;
 
 @Named
@@ -68,7 +70,9 @@ public class TripRegistrationController implements PhaseListener {
 	@Autowired
 	private DriverInfoRepo driverInfoRepo;
 	@Autowired
-	private VehicleRepository vehicleRepository;
+	private VehicleRepository vehicleRepository; 
+	@Autowired
+	private TripRegisterRepository tripRegisterRepository;
 
 	public DriverInfoRepo getDriverInfoRepo() {
 		return driverInfoRepo;
@@ -155,7 +159,6 @@ public class TripRegistrationController implements PhaseListener {
 
 	@PostConstruct
 	public void init() {
-		System.out.println("----------------post construct----------------");
 		this.preFillDiesel();
 		this.preFillBilledExpese();
 		this.preFillRTOandTOLLExpense();
@@ -193,7 +196,7 @@ public class TripRegistrationController implements PhaseListener {
 
 	private void preFillAtmCreditAndDebit() {
 		List<AtmCreditDebitDto> atmCreditDebitDtos = new ArrayList<>();
-		for (int i = 0; i <= 8; i++) {
+		for (int i = 0; i <=7; i++) {
 			AtmCreditDebitDto bAtmCreditDebitDto = new AtmCreditDebitDto();
 			bAtmCreditDebitDto.setRowID("Diesel Expense Row" + String.valueOf(i));
 			atmCreditDebitDtos.add(bAtmCreditDebitDto);
@@ -263,7 +266,7 @@ public class TripRegistrationController implements PhaseListener {
 
 	private void preFillDiesel() {
 		List<FuelDto> aFuelDto = new ArrayList<>();
-		for (int i = 0; i <= 4; i++) {
+		for (int i = 0; i <= 6; i++) {
 			FuelDto bFuelDto = new FuelDto();
 			bFuelDto.setRowID("Diesel Expense Row" + String.valueOf(i));
 			aFuelDto.add(bFuelDto);
@@ -341,6 +344,10 @@ public class TripRegistrationController implements PhaseListener {
 				this.setExpenseonRTOandTOLL(FillBilledExpese(this.getExpenseonRTOandTOLL()));
 			}
 			msg = new FacesMessage("Expense Edited", ((ExpenseonRTOandTOLLDto) event.getObject()).getRowID());
+		}else if(event.getObject() instanceof Advancedto){
+			msg = new FacesMessage("Advance Edited", ((Advancedto) event.getObject()).getRowID());
+		}else if(event.getObject() instanceof AtmCreditDebitDto){
+			msg = new FacesMessage("AtmCreditDebit Edited", ((AtmCreditDebitDto) event.getObject()).getRowID());
 		}
 		this.getTripRegisterDto().setTotalExpenseForTrip(new BigDecimal(0));
 		this.getTripRegisterDto().setTotalIncome(new BigDecimal(0));
@@ -350,7 +357,6 @@ public class TripRegistrationController implements PhaseListener {
 		calculateTotalExpense();
 		calculateTotalProfit();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
-		RequestContext.getCurrentInstance().update("tripRegister:ExpenseOnRTOandToll");
 	}
 
 	private List<ExpenseonRTOandTOLLDto> FillBilledExpese(List<ExpenseonRTOandTOLLDto> pExpenseonRTOandTOLL) {
@@ -459,7 +465,10 @@ public class TripRegistrationController implements PhaseListener {
 	}
 
 	public void processButton() {
-
+		TripRegister tripRegister=new TripRegister();
+		BeanUtils.copyProperties(this.getTripRegisterDto(),tripRegister);
+		this.tripRegisterRepository.save(tripRegister);
+		this.setTripRegisterDto(null);
 	}
 
 	public void calculateBaseOnInputdata() {
@@ -478,12 +487,12 @@ public class TripRegistrationController implements PhaseListener {
 			BigDecimal driverWage = new BigDecimal(0);
 			BigDecimal cleanerWage = new BigDecimal(0);
 			BigDecimal commissionOnLoad = new BigDecimal(0);
-			driverWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.14),
+			driverWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.09),
 					MathContext.DECIMAL32);
-			cleanerWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.02),
+			cleanerWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.025),
 					MathContext.DECIMAL32);
 			commissionOnLoad = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice())
-					.multiply(new BigDecimal(0.02), MathContext.DECIMAL32);
+					.multiply(new BigDecimal(0.05), MathContext.DECIMAL32);
 
 			this.getTripRegisterDto().setCleanerWage(cleanerWage);
 			this.getTripRegisterDto().setTotalDriverWageForTrip(driverWage);
@@ -537,7 +546,9 @@ public class TripRegistrationController implements PhaseListener {
 		if (this.getTripRegisterDto().getCleanerWage() != null) {
 			totalExpense = totalExpense.add(this.getTripRegisterDto().getCleanerWage());
 		}
-
+		if(this.getTripRegisterDto().getOtherExpense() != null){
+			totalExpense = totalExpense.add(this.getTripRegisterDto().getOtherExpense());
+		}
 		this.getTripRegisterDto().setTotalExpenseForTrip(totalExpense);
 
 	}
