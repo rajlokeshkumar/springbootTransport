@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Vehicle Info</title>
+	<link type="text/css" rel="stylesheet" href="/style/Style.css">
+	</link>
+
+	<link rel="stylesheet"
+		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
+	<link rel="stylesheet" href="/style/style.css"></link>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+</h:head>
+
+<body>
+	<h1>Register Vehicle</h1>
+	<h:form>
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block" styleClass="fornewline">
+				<f:view>
+
+					<h:panelGrid columns="2" border="0">
+						<label>RegistrationNumber</label>
+						<h:inputText
+							value="#{vehicleInfoController.vehicle.registrationNumber}"  styleClass="inputtextboxBig"
+							id="registrationNumber">
+							<!--  <f:ajax onevent="focus" listener="#{vehicleInfoController.performtheAction()}" render="inputName" /> -->
+						</h:inputText>
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>ChasisNumber</label>
+						<h:inputText value="#{vehicleInfoController.vehicle.chasisNumber}" styleClass="inputtextboxBig"
+							id="chasisNumber" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>EngineNumber</label>
+
+						<h:inputText value="#{vehicleInfoController.vehicle.engineNumber}" styleClass="inputtextboxBig"
+							id="engineNumber" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>Model</label>
+						<h:inputText value="#{vehicleInfoController.vehicle.model}" styleClass="inputtextboxBig"
+							id="model" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>InsuranceDate</label>
+						<p:calendar value="#{vehicleInfoController.vehicle.insuranceDate}" 
+							id="insuranceDate" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>NPTAX Date</label>
+						<p:calendar value="#{vehicleInfoController.vehicle.npTaxDate}" 
+							id="nptaxDate" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>QuatertaxDate</label>
+						<p:calendar value="#{vehicleInfoController.vehicle.quaterTaxDate}"
+							id="quatertaxDate" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>Number of axile</label>
+						<h:inputText value="#{vehicleInfoController.vehicle.axile}" styleClass="inputtextboxBig"
+							id="axile" />
+					</h:panelGrid>
+					<br />
+
+				</f:view>
+			</h:panelGroup>
+			<h:panelGroup layout="block" style=" margin-left: 560px;">
+				<h:commandButton value="click  me" styleClass="myButton" 
+					action="#{vehicleInfoController.performtheAction()}">
+
+				</h:commandButton>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</body>
+
+</html>

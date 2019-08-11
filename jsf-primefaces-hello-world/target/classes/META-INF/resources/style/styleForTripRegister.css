@@ -1,0 +1,187 @@
+body {
+	background-color: #f2f2f2;
+}
+
+.forHeaderRecord {
+	margin-top: 20px;
+	margin-left: 60px
+}
+
+.fornewline {
+	margin-left: 10px;
+}
+
+h1 {
+	text-align: center;
+}
+
+label {
+	color: #B4886B;
+	font-weight: bold;
+	display: block;
+	width: 100px;
+	font-size: 10px;
+	padding-top: 1px;
+	text-align: center;
+	float: left;
+}
+
+.space5 {
+	height: 5px;
+}
+
+.space10 {
+	height: 10px;
+}
+
+.space15 {
+	height: 15px;
+}
+
+.space5 {
+	height: 20px;
+}
+
+.inputtextboxBig {
+	width: 200px;
+	padding: 4px 8px;
+	margin: 5px 0;
+	display: inline-block;
+	font-size: 20px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.dateTextBoxstyleClass {
+	width: 200px;
+	padding: 4px 6px;
+	margin: 2px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.inputtextboxsmall {
+	width: 50px;
+	padding: 4px 6px;
+	margin: 5px 0;
+	display: inline-block;
+	font-size: 15px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.labelSmall {
+	color: #B4886B;
+	width: 70px;
+	font-size: 20px;
+	padding-top: 1px;
+	text-align: center;
+	float: left;
+}
+
+.myButton {
+	-moz-box-shadow: inset 0px 1px 0px 0px #9acc85;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #9acc85;
+	box-shadow: inset 0px 1px 0px 0px #9acc85;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #74ad5a
+		), color-stop(1, #68a54b));
+	background: -moz-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+	background: -webkit-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+	background: -o-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+	background: -ms-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+	background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#74ad5a',
+		endColorstr='#68a54b', GradientType=0);
+	background-color: #74ad5a;
+	border: 1px solid #3b6e22;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 13px;
+	font-weight: bold;
+	padding: 5px 14px;
+	text-decoration: none;
+}
+
+body {
+	background-color: #f2f2f2;
+}
+
+.forHeaderRecord {
+	margin-top: 20px;
+	margin-left: 60px
+}
+
+.fornewline {
+	margin-left: 100px;
+}
+
+h1 {
+	text-align: center;
+}
+
+label {
+	color: #B4886B;
+	font-weight: bold; display : block;
+	width: 170px;
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: center;
+	float: left;
+	display: block;
+}
+
+.space5 {
+	height: 5px;
+}
+
+.space10 {
+	height: 10px;
+}
+
+.space15 {
+	height: 15px;
+}
+
+.space5 {
+	height: 20px;
+}
+
+.LabelforSummary {
+	font-weight: bold;
+	color: #8E94E6;
+	letter-spacing: 1pt;
+	word-spacing: 2pt;
+	font-size: 15px;
+	text-align: left;
+	font-family: palatino linotype, palatino, serif;
+	line-height: 1;
+}
+
+.styleForOutputtext {
+	width: 200px;
+}
+
+.ui-datalist .ui-datalist-content {
+	border: 0 none
+}
+
+.ui-datalist ul {
+	padding: 0px 10px 0 20px;
+	margin: 5px 0;
+}
+
+.value {
+	font-weight: bold;
+}
+
+.ui-autocomplete-itemtip {
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+}

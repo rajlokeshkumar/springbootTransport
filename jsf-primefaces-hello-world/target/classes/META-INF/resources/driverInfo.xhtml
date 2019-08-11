@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>driver Info</title>
+	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+	</link>
+
+	<link rel="stylesheet"
+		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
+	<link rel="stylesheet" href="/resources/demos/style.css"></link>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+</h:head>
+
+<body>
+	<h1>DRIVER INFORMATION</h1>
+	<h:form>
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block" styleClass="fornewline">
+
+				<h:panelGrid columns="2" border="0">
+					<label>DriverName</label>
+					<h:inputText
+						value="#{driverInfoController.driverInfodto.driverName}"
+						id="driverName">
+						<!--  <f:ajax onevent="focus" listener="#{driverInfoController.performtheAction()}" render="inputName" /> -->
+					</h:inputText>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="2" border="0">
+					<label>License No</label>
+					<h:inputText
+						value="#{driverInfoController.driverInfodto.licenseno}"
+						id="licenseno" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="2" border="0">
+					<label>JoiningDate</label>
+					<p:calendar
+						value="#{driverInfoController.driverInfodto.joiningdate}"
+						id="joiningdate" />
+				</h:panelGrid>
+				<br />
+
+				<h:panelGrid columns="2" border="0">
+					<label>MobileNo</label>
+					<h:inputText
+						value="#{driverInfoController.driverInfodto.mobileNumber}"
+						id="mobileNumber">
+						<!--  <f:ajax onevent="focus" listener="#{driverInfoController.performtheAction()}" render="inputName" /> -->
+					</h:inputText>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="2" border="0">
+					<label>Secondary No</label>
+					<h:inputText
+						value="#{driverInfoController.driverInfodto.secondaryno}"
+						id="secondaryno">
+						<!--  <f:ajax onevent="focus" listener="#{driverInfoController.performtheAction()}" render="inputName" /> -->
+					</h:inputText>
+				</h:panelGrid>
+				<br />
+
+				<h:panelGrid columns="2" border="0">
+					<label>Address</label>
+					<p:inputTextarea rows="6" cols="33"
+						value="#{driverInfoController.driverInfodto.address}" id="address" />
+				</h:panelGrid>
+				<br />
+
+			</h:panelGroup>
+			<h:panelGroup layout="block" style=" margin-left: 560px;">
+				<h:commandButton styleClass="myButton" value="Submit"
+					action="#{driverInfoController.performtheAction()}">
+
+				</h:commandButton>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</body>
+
+</html>

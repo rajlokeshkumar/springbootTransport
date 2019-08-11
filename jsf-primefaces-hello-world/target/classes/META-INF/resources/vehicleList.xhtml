@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Vechile List</title>
+	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+	</link>
+
+	<link rel="stylesheet"
+		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
+	<link rel="stylesheet" href="/resources/demos/style.css"></link>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+</h:head>
+
+<body>
+	<h1>VEHICLE LIST</h1>
+
+	<h:panelGrid columns="1" border="0">
+		<h:panelGroup id="view" layout="block" >
+			<p:dataTable var="lorry" value="#{vehicleInfoController.vechileDtos}">
+				<p:column headerText="Registration No">
+					<h:outputText value="#{lorry.registrationNumber}" />
+				</p:column>
+
+				<p:column headerText="ChasisNumber">
+					<h:outputText value="#{lorry.chasisNumber}" />
+				</p:column>
+
+				<p:column headerText="Model">
+					<h:outputText value="#{lorry.model}" />
+				</p:column>
+
+				<p:column headerText="InsuranceDate">
+					<h:outputText value="#{lorry.insuranceDate}" />
+				</p:column>
+
+				<p:column headerText="NpTaxDate">
+					<h:outputText value="#{lorry.npTaxDate}" />
+				</p:column>
+
+
+				<p:column headerText="QuaterTaxDate">
+					<h:outputText value="#{lorry.quaterTaxDate}" />
+				</p:column>
+
+				<p:column headerText="EngineNumber">
+					<h:outputText value="#{lorry.engineNumber}" />
+				</p:column>
+				<p:column headerText="Axile">
+					<h:outputText value="#{lorry.axile}" />
+				</p:column>
+			</p:dataTable>
+		</h:panelGroup>
+	</h:panelGrid>
+
+</body>
+
+</html>
