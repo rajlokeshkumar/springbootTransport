@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.primefaces.event.CellEditEvent;
@@ -38,7 +38,7 @@ import com.codenotfound.repo.VehicleRepository;
 
 @Named
 @Controller
-@ConversationScoped
+@ViewScoped
 public class TripRegistrationController implements PhaseListener {
 
 	/**
@@ -469,6 +469,7 @@ public class TripRegistrationController implements PhaseListener {
 		BeanUtils.copyProperties(this.getTripRegisterDto(),tripRegister);
 		this.tripRegisterRepository.save(tripRegister);
 		this.setTripRegisterDto(null);
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Trip has been Registered Successfully"));
 	}
 
 	public void calculateBaseOnInputdata() {

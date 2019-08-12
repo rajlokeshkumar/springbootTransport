@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.springframework.beans.BeanUtils;
@@ -20,7 +20,7 @@ import com.codenotfound.repo.DriverInfoRepo;
 
 @Named
 @Controller
-@ConversationScoped
+@ViewScoped
 public class DriverInfoController  implements PhaseListener {
 
 	

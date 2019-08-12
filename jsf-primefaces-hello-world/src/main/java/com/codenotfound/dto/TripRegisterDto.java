@@ -70,6 +70,16 @@ private BigDecimal totalBilledExpense;
 
 private BigDecimal otherExpense;
 
+private String statusOfTrip;
+
+public String getStatusOfTrip() {
+	return statusOfTrip;
+}
+
+public void setStatusOfTrip(String statusOfTrip) {
+	this.statusOfTrip = statusOfTrip;
+}
+
 public BigDecimal getOtherExpense() {
 	return otherExpense;
 }

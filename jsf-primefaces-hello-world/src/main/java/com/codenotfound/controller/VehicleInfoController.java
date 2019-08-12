@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.springframework.beans.BeanUtils;
@@ -16,27 +16,27 @@ import org.springframework.stereotype.Controller;
 
 import com.codenotfound.dto.VehicleDto;
 import com.codenotfound.entity.Vehicle;
-import com.codenotfound.repo.DriverInfoRepo;
 import com.codenotfound.repo.VehicleRepository;
 
 @Controller
 @Named
-@ConversationScoped
+@ViewScoped
 public class VehicleInfoController implements PhaseListener {
 
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
-	@Autowired
-	private DriverInfoRepo driverInfoRepo;
+
 	private VehicleDto vehicleDto;
 
+	private List<String> vehicleLists;
+	
 	private List<VehicleDto> vechileDtos;
 
 	public List<VehicleDto> getVechileDtos() {
-		if(vechileDtos==null){
-			vechileDtos=new ArrayList<>();
+		if (vechileDtos == null) {
+			vechileDtos = new ArrayList<>();
 		}
 		return vechileDtos;
 	}
@@ -67,11 +67,11 @@ public class VehicleInfoController implements PhaseListener {
 	}
 
 	public VehicleInfoController() {
-	
-		
+
 	}
+
 	@PostConstruct
-	public void init(){
+	public void init() {
 		getVehicleList();
 	}
 
@@ -80,14 +80,28 @@ public class VehicleInfoController implements PhaseListener {
 		BeanUtils.copyProperties(this.vehicleDto, aVehicle);
 		this.vehicleRepository.save(aVehicle);
 	}
+
 	public void getVehicleList() {
-	Iterable<Vehicle> a=this.vehicleRepository.findAll();
-	for(Vehicle b:a){
-		VehicleDto vehicleDto=new VehicleDto();
-		BeanUtils.copyProperties(b, vehicleDto);
-		this.getVechileDtos().add(vehicleDto);
+		Iterable<Vehicle> a = this.vehicleRepository.findAll();
+		for (Vehicle b : a) {
+			VehicleDto vehicleDto = new VehicleDto();
+			BeanUtils.copyProperties(b, vehicleDto);
+			this.getVechileDtos().add(vehicleDto);
+			this.getVehicleLists().add(vehicleDto.getRegistrationNumber());
+		}
 	}
+
+	public List<String> getVehicleLists() {
+		if (this.vehicleLists == null) {
+			this.vehicleLists = new ArrayList<>();
+		}
+		return vehicleLists;
 	}
+
+	public void setVehicleLists(List<String> vehicleLists) {
+		this.vehicleLists = vehicleLists;
+	}
+
 	@Override
 	public void afterPhase(PhaseEvent event) {
 		System.out.println(event.getPhaseId());

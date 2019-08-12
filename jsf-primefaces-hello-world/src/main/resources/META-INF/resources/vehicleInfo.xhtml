@@ -4,7 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	>
 <h:head>
 	<title>Vehicle Info</title>
 	<link type="text/css" rel="stylesheet" href="/style/Style.css">
@@ -23,6 +25,7 @@
 </h:head>
 
 <body>
+<ui:include src="home.xhtml" />
 	<h1>Register Vehicle</h1>
 	<h:form>
 		<h:panelGrid columns="1" border="0">
@@ -32,7 +35,7 @@
 					<h:panelGrid columns="2" border="0">
 						<label>RegistrationNumber</label>
 						<h:inputText
-							value="#{vehicleInfoController.vehicle.registrationNumber}"  styleClass="inputtextboxBig"
+							value="#{vehicleInfoController.vehicleDto.registrationNumber}"  styleClass="inputtextboxBig"
 							id="registrationNumber">
 							<!--  <f:ajax onevent="focus" listener="#{vehicleInfoController.performtheAction()}" render="inputName" /> -->
 						</h:inputText>
@@ -40,44 +43,44 @@
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>ChasisNumber</label>
-						<h:inputText value="#{vehicleInfoController.vehicle.chasisNumber}" styleClass="inputtextboxBig"
+						<h:inputText value="#{vehicleInfoController.vehicleDto.chasisNumber}" styleClass="inputtextboxBig"
 							id="chasisNumber" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>EngineNumber</label>
 
-						<h:inputText value="#{vehicleInfoController.vehicle.engineNumber}" styleClass="inputtextboxBig"
+						<h:inputText value="#{vehicleInfoController.vehicleDto.engineNumber}" styleClass="inputtextboxBig"
 							id="engineNumber" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>Model</label>
-						<h:inputText value="#{vehicleInfoController.vehicle.model}" styleClass="inputtextboxBig"
+						<h:inputText value="#{vehicleInfoController.vehicleDto.model}" styleClass="inputtextboxBig"
 							id="model" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>InsuranceDate</label>
-						<p:calendar value="#{vehicleInfoController.vehicle.insuranceDate}" 
+						<p:calendar value="#{vehicleInfoController.vehicleDto.insuranceDate}" 
 							id="insuranceDate" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>NPTAX Date</label>
-						<p:calendar value="#{vehicleInfoController.vehicle.npTaxDate}" 
+						<p:calendar value="#{vehicleInfoController.vehicleDto.npTaxDate}" 
 							id="nptaxDate" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>QuatertaxDate</label>
-						<p:calendar value="#{vehicleInfoController.vehicle.quaterTaxDate}"
+						<p:calendar value="#{vehicleInfoController.vehicleDto.quaterTaxDate}"
 							id="quatertaxDate" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>Number of axile</label>
-						<h:inputText value="#{vehicleInfoController.vehicle.axile}" styleClass="inputtextboxBig"
+						<h:inputText value="#{vehicleInfoController.vehicleDto.axile}" styleClass="inputtextboxBig"
 							id="axile" />
 					</h:panelGrid>
 					<br />

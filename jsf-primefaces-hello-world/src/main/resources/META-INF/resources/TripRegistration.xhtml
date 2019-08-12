@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>Register Trip</title>
 	<link type="text/css" rel="stylesheet"
@@ -22,11 +23,15 @@
 </h:head>
 
 <body>
+	<ui:include src="home.xhtml" />
 	<h1>Register a Trip</h1>
 	<h:panelGrid columns="1" border="0">
 		<h:panelGroup id="view" layout="block">
 
 			<h:form id="tripRegister">
+				<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
 				<h:panelGrid columns="2" border='0' style="margin-left:10px">
 					<h:panelGrid columns="4" border='0' style="margin-left:10px">
 						<label>வண்டி எண்</label>
@@ -359,11 +364,11 @@
 						<h:outputLabel value="Other Expense" styleClass="LabelforSummary" />
 						<h:inputText id="otherExpense" disabled="false"
 							value="#{tripRegistrationController.tripRegisterDto.otherExpense}"
-							styleClass="inputtextboxBig" >
+							styleClass="inputtextboxBig">
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
+						</h:inputText>
 
 					</p:panelGrid>
 					<p:panelGrid columns="2">
@@ -371,11 +376,11 @@
 							styleClass="LabelforSummary" />
 						<h:inputText id="expenseOnRTO" disabled="false"
 							value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
-							styleClass="inputtextboxBig" >
+							styleClass="inputtextboxBig">
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
+						</h:inputText>
 						<h:outputLabel value="ஏற்று மாமுல்" styleClass="LabelforSummary" />
 						<h:inputText
 							value="#{tripRegistrationController.tripRegisterDto.expenseForLoading}"
@@ -395,20 +400,20 @@
 						<h:outputLabel value="TOLL Expense" styleClass="LabelforSummary" />
 						<h:inputText id="totalTollExpense" disabled="false"
 							value="#{tripRegistrationController.tripRegisterDto.totalTollExpense}"
-							styleClass="inputtextboxBig" >
+							styleClass="inputtextboxBig">
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
+						</h:inputText>
 						<h:outputLabel value="Total Billed Expense"
 							styleClass="LabelforSummary" />
 						<h:inputText id="totalBilledExpense" disabled="false"
 							value="#{tripRegistrationController.tripRegisterDto.totalBilledExpense}"
-							styleClass="inputtextboxBig" >
+							styleClass="inputtextboxBig">
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-							</h:inputText>
+						</h:inputText>
 					</p:panelGrid>
 
 					<p:panelGrid columns="2" styleClass="styleForOutputtext">
@@ -429,12 +434,9 @@
 							disabled="true" />
 					</p:panelGrid>
 				</p:panelGrid>
-				
-				<h:commandButton value="submit" styleClass="myButton" 
+				<h:commandButton value="submit" styleClass="myButton"
 					action="#{tripRegistrationController.processButton()}">
-
 				</h:commandButton>
-				<h:messages globalOnly="true" />
 			</h:form>
 		</h:panelGroup>
 	</h:panelGrid>

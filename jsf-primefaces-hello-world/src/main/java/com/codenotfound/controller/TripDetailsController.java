@@ -1,11 +1,12 @@
 package com.codenotfound.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.springframework.beans.BeanUtils;
@@ -18,7 +19,7 @@ import com.codenotfound.repo.TripRegisterRepository;
 
 @Named
 @Controller
-@ConversationScoped
+@ViewScoped
 public class TripDetailsController implements PhaseListener {
 
 	/**
@@ -33,17 +34,30 @@ public class TripDetailsController implements PhaseListener {
 	
 	private List<TripRegisterDto> tripRegisterDtos;
 	
-	
-	public void getTripDetails(){
-		Iterable<TripRegister> tripRegister=tripRegisterRepository.findAll();
-		for(TripRegister atripRegister:tripRegister){
-			TripRegisterDto aTripRegisterDto=new TripRegisterDto();
-			BeanUtils.copyProperties(atripRegister, aTripRegisterDto);
-			tripRegisterDtos.add(aTripRegisterDto);
-		}
+	public TripRegisterRepository getTripRegisterRepository() {
+		
+		return tripRegisterRepository;
 	}
-	
-	
+
+
+	public void setTripRegisterRepository(TripRegisterRepository tripRegisterRepository) {
+		this.tripRegisterRepository = tripRegisterRepository;
+	}
+
+
+	public List<TripRegisterDto> getTripRegisterDtos() {
+		if(tripRegisterDtos==null){
+			tripRegisterDtos=new ArrayList<>();
+		}
+		return tripRegisterDtos;
+	}
+
+
+	public void setTripRegisterDtos(List<TripRegisterDto> tripRegisterDtos) {
+		this.tripRegisterDtos = tripRegisterDtos;
+	}
+
+
 	public String getLorryNumber() {
 		return lorryNumber;
 	}
@@ -72,4 +86,17 @@ public class TripDetailsController implements PhaseListener {
 		return null;
 	}
 
+	public void processRequest(){
+
+		Iterable<TripRegister> tripRegister=tripRegisterRepository.findAll();
+		this.tripRegisterDtos=null;
+		for(TripRegister atripRegister:tripRegister){
+			TripRegisterDto aTripRegisterDto=new TripRegisterDto();
+			BeanUtils.copyProperties(atripRegister, aTripRegisterDto);
+			this.getTripRegisterDtos().add(aTripRegisterDto);
+		}
+	
+		
+	}
+	
 }

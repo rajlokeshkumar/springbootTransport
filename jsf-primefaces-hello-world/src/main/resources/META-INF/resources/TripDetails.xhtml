@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>Trip Details</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
@@ -23,28 +24,89 @@
 </h:head>
 
 <body>
+	<ui:include src="home.xhtml" />
 	<h1>Trip Details</h1>
 	<h:form>
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block" styleClass="fornewline">
 
-				<h:panelGrid columns="2" border="0">
+				<h:panelGrid columns="3" border="0">
 					<label>Lorry Number</label>
-					<h:inputText
-						value="#{driverInfoController.driverInfodto.driverName}"
-						id="driverName">
-					</h:inputText>
-				</h:panelGrid>
-				<br />
-				<h:panelGroup layout="block" style=" margin-left: 560px;">
+
+					<h:selectOneMenu styleClass="inputtextboxBig"
+						value="#{tripDetailsController.lorryNumber}">
+						<f:selectItems value="#{vehicleInfoController.vehicleLists}" />
+					</h:selectOneMenu>
+					
 					<h:commandButton styleClass="myButton" value="Submit"
-						action="#{driverInfoController.performtheAction()}">
+						action="#{tripDetailsController.processRequest()}">
 
 					</h:commandButton>
-				</h:panelGroup>
+				</h:panelGrid>
+
 			</h:panelGroup>
 		</h:panelGrid>
 	</h:form>
+	<br />
+	<br />
+	<h:form>
+		<p:dataTable var="trip"
+			value="#{tripDetailsController.tripRegisterDtos}"
+			style="margin-bottom:40px">
+			<f:facet name="header">
+           Trip Details
+        </f:facet>
+			<p:column headerText="vehicleNo" sortBy="#{trip.vechileNumber}">
+				<h:outputText value="#{trip.vechileNumber}" />
+			</p:column>
+
+			<p:column headerText="tripStartDate" sortBy="#{trip.tripStartDate}">
+				<h:outputText value="#{trip.tripStartDate}" />
+			</p:column>
+
+			<p:column headerText="tripEndDate" sortBy="#{trip.tripEndDate}">
+				<h:outputText value="#{trip.tripEndDate}" />
+			</p:column>
+
+			<p:column headerText="startPlace" sortBy="#{trip.startPlace}">
+				<h:outputText value="#{trip.startPlace}" />
+			</p:column>
+
+			<p:column headerText="endPlace" sortBy="#{trip.endPlace}">
+				<h:outputText value="#{trip.endPlace}" />
+			</p:column>
+
+			<p:column headerText="Rto Expense"
+				sortBy="#{trip.totalexpenseonRTOandTOLL}">
+				<h:outputText value="#{trip.totalexpenseonRTOandTOLL}" />
+			</p:column>
+
+
+			<p:column headerText="LoadingExpense"
+				sortBy="#{trip.expenseForLoading}">
+				<h:outputText value="#{trip.expenseForLoading}" />
+			</p:column>
+
+
+			<p:column headerText="unBilledExpense"
+				sortBy="#{trip.totalunBilledExpense}">
+				<h:outputText value="#{trip.totalunBilledExpense}" />
+			</p:column>
+
+
+			<p:column headerText="profitOnTrip"
+				sortBy="#{trip.totalprofitOnTrip}">
+				<h:outputText value="#{trip.totalprofitOnTrip}" />
+			</p:column>
+
+
+			<p:column headerText="status" sortBy="#{trip.statusOfTrip}">
+				<h:outputText value="#{trip.statusOfTrip}" />
+			</p:column>
+		</p:dataTable>
+
+	</h:form>
+
 </body>
 
 </html>
