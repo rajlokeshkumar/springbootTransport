@@ -1,10 +1,12 @@
 package com.codenotfound.dto;
 
+import java.math.BigDecimal;
+
 public class Advancedto {
 
 	private String purpose;
 	
-	private String amount;
+	private BigDecimal amount;
 
 	public String getPurpose() {
 		return purpose;
@@ -14,13 +16,14 @@ public class Advancedto {
 		this.purpose = purpose;
 	}
 
-	public String getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
+
 	private String rowID;
 
 	public String getRowID() {

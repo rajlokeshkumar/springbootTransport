@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TripRegisterDto {
+	
+private String id;	
 
 private String vechileNumber;
 
@@ -71,6 +73,16 @@ private BigDecimal totalBilledExpense;
 private BigDecimal otherExpense;
 
 private String statusOfTrip;
+
+
+
+public String getId() {
+	return id;
+}
+
+public void setId(String id) {
+	this.id = id;
+}
 
 public String getStatusOfTrip() {
 	return statusOfTrip;

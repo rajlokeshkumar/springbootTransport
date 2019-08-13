@@ -37,7 +37,7 @@
 						value="#{tripDetailsController.lorryNumber}">
 						<f:selectItems value="#{vehicleInfoController.vehicleLists}" />
 					</h:selectOneMenu>
-					
+
 					<h:commandButton styleClass="myButton" value="Submit"
 						action="#{tripDetailsController.processRequest()}">
 
@@ -50,9 +50,9 @@
 	<br />
 	<br />
 	<h:form>
-		<p:dataTable var="trip"
+		<p:dataTable var="trip" id="tripDetails" 
 			value="#{tripDetailsController.tripRegisterDtos}"
-			style="margin-bottom:40px">
+			style="margin-bottom:40px"  selectionMode="single" selection="#{TripRegistrationController.tripRegisterDto}" rowKey="#{trip.id}">
 			<f:facet name="header">
            Trip Details
         </f:facet>
@@ -61,11 +61,15 @@
 			</p:column>
 
 			<p:column headerText="tripStartDate" sortBy="#{trip.tripStartDate}">
-				<h:outputText value="#{trip.tripStartDate}" />
+				<h:outputText value="#{trip.tripStartDate}">
+					<f:convertDateTime pattern="dd-MMM-yyyy" />
+				</h:outputText>
 			</p:column>
 
 			<p:column headerText="tripEndDate" sortBy="#{trip.tripEndDate}">
-				<h:outputText value="#{trip.tripEndDate}" />
+				<h:outputText value="#{trip.tripEndDate}">
+					<f:convertDateTime pattern="dd-MMM-yyyy" />
+				</h:outputText>
 			</p:column>
 
 			<p:column headerText="startPlace" sortBy="#{trip.startPlace}">
@@ -104,7 +108,11 @@
 				<h:outputText value="#{trip.statusOfTrip}" />
 			</p:column>
 		</p:dataTable>
-
+		<p:contextMenu for="tripDetails">
+			<p:menuitem value="Trip Details" update="tripDetails" icon="pi pi-search"
+				url="TripRegistration.xhtml" />
+			<p:menuitem value="Delete" update="tripDetails" icon="pi pi-times" />
+		</p:contextMenu>
 	</h:form>
 
 </body>
