@@ -74,7 +74,37 @@ private BigDecimal otherExpense;
 
 private String statusOfTrip;
 
+private BigDecimal billedtollExpense;
 
+private BigDecimal drivertoGive;
+
+private List<Advancedto> advancedtos;
+
+
+
+public List<Advancedto> getAdvancedtos() {
+	return advancedtos;
+}
+
+public void setAdvancedtos(List<Advancedto> advancedtos) {
+	this.advancedtos = advancedtos;
+}
+
+public BigDecimal getDrivertoGive() {
+	return drivertoGive;
+}
+
+public void setDrivertoGive(BigDecimal drivertoGive) {
+	this.drivertoGive = drivertoGive;
+}
+
+public BigDecimal getBilledtollExpense() {
+	return billedtollExpense;
+}
+
+public void setBilledtollExpense(BigDecimal billedtollExpense) {
+	this.billedtollExpense = billedtollExpense;
+}
 
 public String getId() {
 	return id;
