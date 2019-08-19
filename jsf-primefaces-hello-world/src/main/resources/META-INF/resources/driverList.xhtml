@@ -40,7 +40,9 @@
 				</p:column>
 
 				<p:column headerText="Joiningdate">
-					<h:outputText value="#{driver.joiningdate}" />
+					<h:outputText value="#{driver.joiningdate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" /> 
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="MobileNumber">

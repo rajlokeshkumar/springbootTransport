@@ -1,9 +1,11 @@
 package com.codenotfound.dto;
 
+import java.util.Date;
+
 public class DriverInfodto {
 	private String driverName;
 	private String licenseno;
-	private String joiningdate;
+	private Date joiningdate;
 	private String mobileNumber;
 	private String secondaryno;
 	private String address;
@@ -24,11 +26,13 @@ public class DriverInfodto {
 		this.licenseno = licenseno;
 	}
 
-	public String getJoiningdate() {
+
+
+	public Date getJoiningdate() {
 		return joiningdate;
 	}
 
-	public void setJoiningdate(String joiningdate) {
+	public void setJoiningdate(Date joiningdate) {
 		this.joiningdate = joiningdate;
 	}
 

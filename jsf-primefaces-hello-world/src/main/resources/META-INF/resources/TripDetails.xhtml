@@ -27,14 +27,18 @@
 	<ui:include src="home.xhtml" />
 	<h1>Trip Details</h1>
 	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block" styleClass="fornewline">
 
 				<h:panelGrid columns="3" border="0">
-					<label>Lorry Number</label>
+					<label>வண்டி எண்</label>
 
 					<h:selectOneMenu styleClass="inputtextboxBig"
 						value="#{tripDetailsController.lorryNumber}">
+						<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
 						<f:selectItems value="#{vehicleInfoController.vehicleLists}" />
 					</h:selectOneMenu>
 
@@ -50,55 +54,65 @@
 	<br />
 	<br />
 	<h:form>
-		<p:dataTable var="trip" id="tripDetails" 
+		<p:messages id="messages1" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+		<p:dataTable var="trip" id="tripDetails"
 			value="#{tripDetailsController.tripRegisterDtos}"
-			style="margin-bottom:40px"  selectionMode="single" selection="#{TripRegistrationController.tripRegisterDto}" rowKey="#{trip.id}">
+			style="margin-bottom:40px" selectionMode="single"
+			selection="#{tripDetailsController.tripRegisterDto}"
+			rowKey="#{trip.id}">
+
 			<f:facet name="header">
            Trip Details
         </f:facet>
-			<p:column headerText="vehicleNo" sortBy="#{trip.vechileNumber}">
+			<p:ajax event="contextMenu"
+				listener="#{tripDetailsController.oncontextMenuClick}" />
+			<p:ajax event="rowUnselect"
+				listener="#{tripDetailsController.onRowUnselect}" />
+			<p:column headerText="வண்டி எண்" sortBy="#{trip.vechileNumber}">
 				<h:outputText value="#{trip.vechileNumber}" />
 			</p:column>
 
-			<p:column headerText="tripStartDate" sortBy="#{trip.tripStartDate}">
+			<p:column headerText="புரப்படும் தேதி" sortBy="#{trip.tripStartDate}">
 				<h:outputText value="#{trip.tripStartDate}">
 					<f:convertDateTime pattern="dd-MMM-yyyy" />
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="tripEndDate" sortBy="#{trip.tripEndDate}">
+			<p:column headerText="சேரூம் தேதி" sortBy="#{trip.tripEndDate}">
 				<h:outputText value="#{trip.tripEndDate}">
 					<f:convertDateTime pattern="dd-MMM-yyyy" />
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="startPlace" sortBy="#{trip.startPlace}">
+			<p:column headerText="புரப்படும் இடம்" sortBy="#{trip.startPlace}">
 				<h:outputText value="#{trip.startPlace}" />
 			</p:column>
 
-			<p:column headerText="endPlace" sortBy="#{trip.endPlace}">
+			<p:column headerText="சேரூம் இடம்" sortBy="#{trip.endPlace}">
 				<h:outputText value="#{trip.endPlace}" />
 			</p:column>
 
-			<p:column headerText="Rto Expense"
+			<p:column headerText="RTO செலவு"
 				sortBy="#{trip.totalexpenseonRTOandTOLL}">
 				<h:outputText value="#{trip.totalexpenseonRTOandTOLL}" />
 			</p:column>
 
 
-			<p:column headerText="LoadingExpense"
+			<p:column headerText="ஏற்று மாமுல்"
 				sortBy="#{trip.expenseForLoading}">
 				<h:outputText value="#{trip.expenseForLoading}" />
 			</p:column>
 
 
-			<p:column headerText="unBilledExpense"
-				sortBy="#{trip.totalunBilledExpense}">
-				<h:outputText value="#{trip.totalunBilledExpense}" />
+			<p:column headerText="ரிட்டன் வாடகை"
+				sortBy="#{trip.amountPaidonOffload}">
+				<h:outputText value="#{trip.amountPaidonOffload}" />
 			</p:column>
 
 
-			<p:column headerText="profitOnTrip"
+			<p:column headerText="லாபம்"
 				sortBy="#{trip.totalprofitOnTrip}">
 				<h:outputText value="#{trip.totalprofitOnTrip}" />
 			</p:column>
@@ -109,9 +123,11 @@
 			</p:column>
 		</p:dataTable>
 		<p:contextMenu for="tripDetails">
-			<p:menuitem value="Trip Details" update="tripDetails" icon="pi pi-search"
-				url="TripRegistration.xhtml" />
-			<p:menuitem value="Delete" update="tripDetails" icon="pi pi-times" />
+			<p:menuitem value="Trip Details" update="tripDetails"
+				icon="pi pi-search" url="TripRegistration.xhtml" />
+			<p:menuitem value="Delete" update="tripDetails"
+				actionListener="#{tripDetailsController.deleteTripDetails}"
+				icon="pi pi-times" />
 		</p:contextMenu>
 	</h:form>
 

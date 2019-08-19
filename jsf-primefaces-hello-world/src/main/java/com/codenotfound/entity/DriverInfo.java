@@ -1,5 +1,7 @@
 package com.codenotfound.entity;
 
+import java.util.Date;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
@@ -11,7 +13,7 @@ private String driverName;
 @DynamoDBHashKey
 private String licenseno;
 @DynamoDBAttribute
-private String joiningdate;
+private Date joiningdate;
 @DynamoDBAttribute
 private String mobileNumber;
 @DynamoDBAttribute
@@ -30,10 +32,11 @@ public String getLicenseno() {
 public void setLicenseno(String licenseno) {
 	this.licenseno = licenseno;
 }
-public String getJoiningdate() {
+
+public Date getJoiningdate() {
 	return joiningdate;
 }
-public void setJoiningdate(String joiningdate) {
+public void setJoiningdate(Date joiningdate) {
 	this.joiningdate = joiningdate;
 }
 public String getMobileNumber() {

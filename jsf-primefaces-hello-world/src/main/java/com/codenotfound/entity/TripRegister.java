@@ -88,10 +88,43 @@ public class TripRegister {
 	@DynamoDBAttribute
 	@DynamoDBTypeConverted(converter = AtmCreditDebit.class)
 	private List<AtmCreditDebit> atmCreditDebits;
+	@DynamoDBAttribute
+	private BigDecimal drivertoGive;
+	@DynamoDBAttribute
+	private BigDecimal otherExpense;
+	@DynamoDBAttribute
+	private BigDecimal billedtollExpense;
+	@DynamoDBAttribute
+	private String statusOfTrip;
 	
+	
+	public String getStatusOfTrip() {
+		return statusOfTrip;
+	}
+
+	public void setStatusOfTrip(String statusOfTrip) {
+		this.statusOfTrip = statusOfTrip;
+	}
+
+	public BigDecimal getOtherExpense() {
+		return otherExpense;
+	}
+
+	public void setOtherExpense(BigDecimal otherExpense) {
+		this.otherExpense = otherExpense;
+	}
+
+	public BigDecimal getBilledtollExpense() {
+		return billedtollExpense;
+	}
+
+	public void setBilledtollExpense(BigDecimal billedtollExpense) {
+		this.billedtollExpense = billedtollExpense;
+	}
+
 	public List<AtmCreditDebit> getAtmCreditDebits() {
-		if(atmCreditDebits==null){
-			atmCreditDebits=new ArrayList<>();
+		if (atmCreditDebits == null) {
+			atmCreditDebits = new ArrayList<>();
 		}
 		return atmCreditDebits;
 	}
@@ -109,10 +142,18 @@ public class TripRegister {
 	}
 
 	public List<Advance> getAdvances() {
-		if(advances==null){
-			advances=new ArrayList<>();
+		if (advances == null) {
+			advances = new ArrayList<>();
 		}
 		return advances;
+	}
+
+	public BigDecimal getDrivertoGive() {
+		return drivertoGive;
+	}
+
+	public void setDrivertoGive(BigDecimal drivertoGive) {
+		this.drivertoGive = drivertoGive;
 	}
 
 	public void setAdvances(List<Advance> advances) {
@@ -143,7 +184,6 @@ public class TripRegister {
 		this.tripEndDate = tripEndDate;
 	}
 
-	
 	public String getVechileNumber() {
 		return vechileNumber;
 	}
@@ -249,8 +289,8 @@ public class TripRegister {
 	}
 
 	public List<Fuel> getFuel() {
-		if(fuel==null){
-			fuel=new ArrayList<>();
+		if (fuel == null) {
+			fuel = new ArrayList<>();
 		}
 		return fuel;
 	}

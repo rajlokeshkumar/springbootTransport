@@ -44,16 +44,22 @@
 				</p:column>
 
 				<p:column headerText="InsuranceDate">
-					<h:outputText value="#{lorry.insuranceDate}" />
+					<h:outputText value="#{lorry.insuranceDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" /> 	
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="NpTaxDate">
-					<h:outputText value="#{lorry.npTaxDate}" />
+					<h:outputText value="#{lorry.npTaxDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" /> 	
+					</h:outputText>
 				</p:column>
 
 
 				<p:column headerText="QuaterTaxDate">
-					<h:outputText value="#{lorry.quaterTaxDate}" />
+					<h:outputText value="#{lorry.quaterTaxDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" />
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="EngineNumber">

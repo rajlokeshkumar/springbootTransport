@@ -171,6 +171,27 @@ public class TripRegistrationController implements PhaseListener {
 		this.getVehicleList();
 		this.getDriverList();
 		this.preFillAdvanceDto();
+		if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("tripRegisterId") != null) {
+			String tripRegisterId = FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
+					.get("tripRegisterId").toString();
+			TripRegister aTripRegister = this.tripRegisterRepository.findById(tripRegisterId).get();
+			assemblerFromDomain(aTripRegister);
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(tripRegisterId);
+		}
+	}
+
+	private void assemblerFromDomain(TripRegister pTripRegister) {
+		BeanUtils.copyProperties(pTripRegister, this.getTripRegisterDto());
+		for (int i = 0; i <= 6; i++) {
+			BeanUtils.copyProperties(pTripRegister.getFuel().get(i), this.fuelDtoForTable.get(i));
+		}
+		for (int i = 0; i <= 7; i++) {
+			BeanUtils.copyProperties(pTripRegister.getAtmCreditDebits().get(i), this.getAtmCreditDebitDto().get(i));
+		}
+		for (int i = 0; i <= 7; i++) {
+			BeanUtils.copyProperties(pTripRegister.getAdvances().get(i), this.getTotalAdvance().get(i));
+		}
+		
 	}
 
 	private void preFillAdvanceDto() {
@@ -370,7 +391,7 @@ public class TripRegistrationController implements PhaseListener {
 		calculateTotalhireprice();
 		calculateTotalExpense();
 		calculateTotalProfit();
-		 calculateDriverToGive();
+		calculateDriverToGive();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -494,7 +515,7 @@ public class TripRegistrationController implements PhaseListener {
 		} else if (event.getObject() instanceof AtmCreditDebitDto) {
 
 			msg = new FacesMessage("ATM Expense Edited", ((AtmCreditDebitDto) event.getObject()).getRowID());
-		}else if (event.getObject() instanceof Advancedto) {
+		} else if (event.getObject() instanceof Advancedto) {
 
 			msg = new FacesMessage("Advance Expense Edited", ((Advancedto) event.getObject()).getRowID());
 		}
@@ -523,23 +544,23 @@ public class TripRegistrationController implements PhaseListener {
 	public void processButton() {
 		TripRegister tripRegister = new TripRegister();
 		BeanUtils.copyProperties(this.getTripRegisterDto(), tripRegister);
-		List<Fuel> fuel=new ArrayList<>();
-		for(FuelDto afuelDto:this.getFuelDtoForTable()){
-			Fuel bFuel=new Fuel();
+		List<Fuel> fuel = new ArrayList<>();
+		for (FuelDto afuelDto : this.getFuelDtoForTable()) {
+			Fuel bFuel = new Fuel();
 			BeanUtils.copyProperties(afuelDto, bFuel);
 			fuel.add(bFuel);
 		}
 		tripRegister.setFuel(fuel);
-		List<Advance> advances=new ArrayList<>();
-		for(Advancedto aAdvanceDto:this.getTotalAdvance()){
-			Advance bAdvance=new Advance();
+		List<Advance> advances = new ArrayList<>();
+		for (Advancedto aAdvanceDto : this.getTotalAdvance()) {
+			Advance bAdvance = new Advance();
 			BeanUtils.copyProperties(aAdvanceDto, bAdvance);
 			advances.add(bAdvance);
 		}
 		tripRegister.setAdvances(advances);
-		List<AtmCreditDebit> atmCreditDebits=new ArrayList<>();
-		for(AtmCreditDebitDto aAtmCreditDebitDto:this.getAtmCreditDebitDto()){
-			AtmCreditDebit bAtmCreditDebit=new AtmCreditDebit();
+		List<AtmCreditDebit> atmCreditDebits = new ArrayList<>();
+		for (AtmCreditDebitDto aAtmCreditDebitDto : this.getAtmCreditDebitDto()) {
+			AtmCreditDebit bAtmCreditDebit = new AtmCreditDebit();
 			BeanUtils.copyProperties(aAtmCreditDebitDto, bAtmCreditDebit);
 			atmCreditDebits.add(bAtmCreditDebit);
 		}
@@ -583,14 +604,16 @@ public class TripRegistrationController implements PhaseListener {
 		}
 		BigDecimal totalVehiclePricetoAtm = new BigDecimal(0);
 		for (AtmCreditDebitDto aAtmCreditDebitDto : this.getAtmCreditDebitDto()) {
-			if (aAtmCreditDebitDto.getPaymentMode() != null && (aAtmCreditDebitDto.getPaymentMode().equals("வடகை பெற்றது")
-					|| aAtmCreditDebitDto.getPaymentMode().equals("காசோலை"))) {
+			if (aAtmCreditDebitDto.getPaymentMode() != null
+					&& (aAtmCreditDebitDto.getPaymentMode().equals("வடகை பெற்றது")
+							|| aAtmCreditDebitDto.getPaymentMode().equals("காசோலை"))) {
 				totalVehiclePricetoAtm = totalVehiclePricetoAtm.add(aAtmCreditDebitDto.getAmount());
 			}
 
 		}
 		Integer totlaAmountDrivertoGive = ((this.getTripRegisterDto().getHireprice()
-				+ this.getTripRegisterDto().getVehicleAdvance().intValue()+this.getTripRegisterDto().getAmountpaidonLoad().intValue())
+				+ this.getTripRegisterDto().getVehicleAdvance().intValue()
+				+ this.getTripRegisterDto().getAmountpaidonLoad().intValue())
 				- (this.getTripRegisterDto().getTotalExpenseForTrip()
 						.add(this.getTripRegisterDto().getAmountPaidonOffload()).add(totalVehiclePricetoAtm)
 						.intValue()));

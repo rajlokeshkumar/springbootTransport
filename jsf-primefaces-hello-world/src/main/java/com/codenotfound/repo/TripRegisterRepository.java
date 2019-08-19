@@ -9,6 +9,6 @@ import com.codenotfound.entity.TripRegister;
 
 
 @EnableScan
-public interface TripRegisterRepository extends CrudRepository<TripRegister, Integer> {
- /*List<TripRegister> findByVechileNumber(String vechileNumber);*/
+public interface TripRegisterRepository extends CrudRepository<TripRegister, String> {
+	List<TripRegister> findByVechileNumber(String vechileNumber);
 }

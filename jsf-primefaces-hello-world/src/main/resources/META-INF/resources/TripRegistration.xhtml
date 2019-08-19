@@ -37,7 +37,8 @@
 						<label>வண்டி எண்</label>
 						<h:selectOneMenu styleClass="inputtextboxBig"
 							value="#{tripRegistrationController.tripRegisterDto.vechileNumber}">
-							 <f:selectItem itemValue="#{null}" itemLabel="--select--"  noSelectionOption="true"/>
+							<f:selectItem itemValue="#{null}" itemLabel="--select--"
+								noSelectionOption="true" />
 							<f:selectItems value="#{tripRegistrationController.vehicleNo}" />
 						</h:selectOneMenu>
 						<label>வண்டி அட்வான்ஸ்</label>
@@ -127,7 +128,7 @@
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:driverToGive  :tripRegister:commission :tripRegister:cleanerWage :tripRegister:totaldriverWage :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-					
+
 						</h:inputText>
 						<label>புரப்படும் தேதி</label>
 						<p:calendar id="tripStartDate" pattern="dd-MMM-yyyy"
@@ -149,10 +150,10 @@
       						 </f:facet>
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:messages,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:msgs" />
+							update=":tripRegister:messages" />
 
 
 						<p:column headerText="தேவை">
@@ -184,7 +185,7 @@
 					</p:dataTable>
 
 				</h:panelGrid>
-				<p:growl id="msgs" showDetail="true" />
+
 				<h:panelGrid columns="2" border="0">
 
 					<p:dataTable id="Fuel1" var="vehicle"
@@ -196,10 +197,10 @@
 
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:driverToGive :tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:msgs,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:driverToGive :tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:msgs" />
+							update=":tripRegister:messages" />
 
 						<p:column headerText="தேதி">
 							<p:cellEditor>
@@ -276,9 +277,11 @@
 								<f:facet name="input">
 									<h:selectOneMenu value="#{vehicle.paymentMode}"
 										style="width:100%">
-									<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
-									<f:selectItem itemValue = "பணம்" itemLabel = "பணம்" /> 
-  									<f:selectItem itemValue = "SUNDARAM FINANCE" itemLabel = "SUNDARAM FINANCE" /> 
+										<f:selectItem itemLabel="-- Select --"
+											noSelectionOption="true" />
+										<f:selectItem itemValue="பணம்" itemLabel="பணம்" />
+										<f:selectItem itemValue="SUNDARAM FINANCE"
+											itemLabel="SUNDARAM FINANCE" />
 									</h:selectOneMenu>
 								</f:facet>
 							</p:cellEditor>
@@ -297,10 +300,10 @@
 
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:driverToGive :tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:msgs,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:driverToGive :tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:msgs" />
+							update=":tripRegister:messages" />
 
 
 						<p:column headerText="தேதி">
@@ -335,11 +338,13 @@
 								</f:facet>
 								<f:facet name="input">
 									<h:selectOneMenu value="#{atm.paymentMode}" style="width:100%">
-									<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
-									<f:selectItem itemValue = "ATM கொடுதது" itemLabel = "ATM கொடுதது" /> 
-  									<f:selectItem itemValue = "வடகை பெற்றது" itemLabel = "வடகை பெற்றது" /> 
-									<f:selectItem itemValue = "காசோலை" itemLabel = "காசோலை" />
-									<f:selectItem itemValue = "Fasttag" itemLabel = "Fasttag" /> 
+										<f:selectItem itemLabel="-- Select --"
+											noSelectionOption="true" />
+										<f:selectItem itemValue="ATM கொடுதது" itemLabel="ATM கொடுதது" />
+										<f:selectItem itemValue="வடகை பெற்றது"
+											itemLabel="வடகை பெற்றது" />
+										<f:selectItem itemValue="காசோலை" itemLabel="காசோலை" />
+										<f:selectItem itemValue="Fasttag" itemLabel="Fasttag" />
 									</h:selectOneMenu>
 								</f:facet>
 							</p:cellEditor>
@@ -349,113 +354,135 @@
 						</p:column>
 					</p:dataTable>
 				</h:panelGrid>
+				<h:panelGroup id="expenseSection" layout="block">
 
-				<p:panelGrid columns="3">
+					<p:panelGrid columns="3" border="0">
 
-					<p:panelGrid columns="2">
+						<p:panelGrid columns="2" border="0">
 
-						<h:outputLabel value="கமிசன் பில்படி" styleClass="LabelforSummary" />
-						<h:inputText id="commission" disabled="true"
-							value="#{tripRegistrationController.tripRegisterDto.commissionAsBilled}"
-							styleClass="inputtextboxBig" />
-						<h:outputLabel value="TotalFuelExpense"
-							styleClass="LabelforSummary" />
-						<h:inputText id="totalFuelExpense" disabled="true"
-							value="#{tripRegistrationController.tripRegisterDto.totalDieselAmount}"
-							styleClass="inputtextboxBig" />
-						<h:outputLabel value="டிரைவர்கள் படி" styleClass="LabelforSummary" />
-						<h:inputText id="totaldriverWage" disabled="true"
-							value="#{tripRegistrationController.tripRegisterDto.totalDriverWageForTrip}"
-							styleClass="inputtextboxBig" />
-						<h:outputLabel value="கிளீனர் படி" styleClass="LabelforSummary" />
-						<h:inputText id="cleanerWage" disabled="true"
-							value="#{tripRegistrationController.tripRegisterDto.cleanerWage}"
-							styleClass="inputtextboxBig" />
-						<h:outputLabel value="Other Expense" styleClass="LabelforSummary" />
-						<h:inputText id="otherExpense" disabled="false"
-							value="#{tripRegistrationController.tripRegisterDto.otherExpense}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-					<h:outputLabel value="Billed toll Exepnse " stylteClass="LabelforSummary" />
-						<h:inputText id="billedTollExpense" disabled="false"
-							value="#{tripRegistrationController.tripRegisterDto.billedtollExpense}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalTollExpense :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
+							<h:outputLabel value="கமிசன் பில்படி"
+								styleClass="LabelforSummary" />
+							<h:inputText id="commission" disabled="true"
+								value="#{tripRegistrationController.tripRegisterDto.commissionAsBilled}"
+								styleClass="inputtextboxBig" />
+							<h:outputLabel value="மொத்த டிசல் செலவு"
+								styleClass="LabelforSummary" />
+							<h:inputText id="totalFuelExpense" disabled="true"
+								value="#{tripRegistrationController.tripRegisterDto.totalDieselAmount}"
+								styleClass="inputtextboxBig" />
+							<h:outputLabel value="டிரைவர்கள் படி"
+								styleClass="LabelforSummary" />
+							<h:inputText id="totaldriverWage" disabled="true"
+								value="#{tripRegistrationController.tripRegisterDto.totalDriverWageForTrip}"
+								styleClass="inputtextboxBig" />
+							<h:outputLabel value="கிளீனர் படி" styleClass="LabelforSummary" />
+							<h:inputText id="cleanerWage" disabled="true"
+								value="#{tripRegistrationController.tripRegisterDto.cleanerWage}"
+								styleClass="inputtextboxBig" />
+							<h:outputLabel value="இதர செலவு" styleClass="LabelforSummary" />
+							<h:inputText id="otherExpense" disabled="false"
+								value="#{tripRegistrationController.tripRegisterDto.otherExpense}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+							<h:outputLabel value="பில்படி டொல்கேட் செலவு"
+								stylteClass="LabelforSummary" />
+							<h:inputText id="billedTollExpense" disabled="false"
+								value="#{tripRegistrationController.tripRegisterDto.billedtollExpense}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalTollExpense :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+						</p:panelGrid>
+						<p:panelGrid columns="2" border="0">
+							<h:outputLabel value="RTO செலவு" styleClass="LabelforSummary" />
+							<h:inputText id="expenseOnRTO" disabled="false"
+								value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+							<h:outputLabel value="ஏற்று மாமுல்" styleClass="LabelforSummary" />
+							<h:inputText
+								value="#{tripRegistrationController.tripRegisterDto.expenseForLoading}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+							<h:outputLabel value="இறக்கு மாமுல்" styleClass="LabelforSummary" />
+							<h:inputText
+								value="#{tripRegistrationController.tripRegisterDto.expenseForunloading}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+							<h:outputLabel value="மொத்த டொல்கேட் செலவு"
+								styleClass="LabelforSummary" />
+							<h:inputText id="totalTollExpense" disabled="true"
+								value="#{tripRegistrationController.tripRegisterDto.totalTollExpense}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+							<h:outputLabel value="மொத்த பில்படி செலவு"
+								styleClass="LabelforSummary" />
+							<h:inputText id="totalBilledExpense" disabled="false"
+								value="#{tripRegistrationController.tripRegisterDto.totalBilledExpense}"
+								styleClass="inputtextboxBig">
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
+							</h:inputText>
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="மொத்த செலவு" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig"
+								id="totalExpenseForTrip"
+								value="#{tripRegistrationController.tripRegisterDto.totalExpenseForTrip}"
+								disabled="true" />
+							<h:outputLabel value="மொத்த வாடகை" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig"
+								id="totalIncomewithAdvance"
+								value="#{tripRegistrationController.tripRegisterDto.totalIncome}"
+								disabled="true" />
+							<h:outputLabel value="லாபம்" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig" id="totalProfitOnTrip"
+								value="#{tripRegistrationController.tripRegisterDto.totalprofitOnTrip}"
+								disabled="true" />
+							<h:outputLabel value="டிரைவர் கொடுக வேண்டியது"
+								styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig" id="driverToGive"
+								value="#{tripRegistrationController.tripRegisterDto.statusOfTrip}"
+								disabled="true" />
+							<h:outputLabel value="status" styleClass="LabelforSummary" />
+
+							<h:selectOneMenu styleClass="inputtextboxBig"
+								value="#{tripRegistrationController.tripRegisterDto.statusOfTrip}">
+								<f:selectItem itemValue="#{null}" itemLabel="--select--"
+									noSelectionOption="true" />
+								<f:selectItem itemValue="STARTED" itemLabel="STARTED" />
+								<f:selectItem itemValue="ONGOING" itemLabel="ONGOING" />
+								<f:selectItem itemValue="AMOUNT PENDING"
+									itemLabel="AMOUNT PENDING" />
+								<f:selectItem itemValue="COMPLETED" itemLabel="COMPLETED" />
+							</h:selectOneMenu>
+
+
+						</p:panelGrid>
 					</p:panelGrid>
-					<p:panelGrid columns="2">
-						<h:outputLabel value="TotalRTOExpense"
-							styleClass="LabelforSummary" />
-						<h:inputText id="expenseOnRTO" disabled="false"
-							value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-						<h:outputLabel value="ஏற்று மாமுல்" styleClass="LabelforSummary" />
-						<h:inputText
-							value="#{tripRegistrationController.tripRegisterDto.expenseForLoading}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-						<h:outputLabel value="இறக்கு மாமுல்" styleClass="LabelforSummary" />
-						<h:inputText
-							value="#{tripRegistrationController.tripRegisterDto.expenseForunloading}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-						<h:outputLabel value="TOLL Expense" styleClass="LabelforSummary" />
-						<h:inputText id="totalTollExpense" disabled="true"
-							value="#{tripRegistrationController.tripRegisterDto.totalTollExpense}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-						<h:outputLabel value="Total Billed Expense"
-							styleClass="LabelforSummary" />
-						<h:inputText id="totalBilledExpense" disabled="false"
-							value="#{tripRegistrationController.tripRegisterDto.totalBilledExpense}"
-							styleClass="inputtextboxBig">
-							<f:ajax event="change"
-								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
-								render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-						</h:inputText>
-					</p:panelGrid>
-
-					<p:panelGrid columns="2" styleClass="styleForOutputtext">
-
-						<h:outputLabel value="TotalTripExpense"
-							styleClass="LabelforSummary" />
-						<h:inputText styleClass="inputtextboxBig" id="totalExpenseForTrip"
-							value="#{tripRegistrationController.tripRegisterDto.totalExpenseForTrip}"
-							disabled="true" />
-						<h:outputLabel value="TotalHirePrice" styleClass="LabelforSummary" />
-						<h:inputText styleClass="inputtextboxBig"
-							id="totalIncomewithAdvance"
-							value="#{tripRegistrationController.tripRegisterDto.totalIncome}"
-							disabled="true" />
-						<h:outputLabel value="ProfitOnTrip" styleClass="LabelforSummary" />
-						<h:inputText styleClass="inputtextboxBig" id="totalProfitOnTrip"
-							value="#{tripRegistrationController.tripRegisterDto.totalprofitOnTrip}"
-							disabled="true" />
-						<h:outputLabel value="DriverToGive" styleClass="LabelforSummary" />
-						<h:inputText styleClass="inputtextboxBig" id="driverToGive"
-							value="#{tripRegistrationController.tripRegisterDto.drivertoGive}"
-							disabled="true" />	
-					</p:panelGrid>
-				</p:panelGrid>
+				</h:panelGroup>
+				<br />
 				<h:commandButton value="submit" styleClass="myButton"
+					style="margin-left:30%"
 					action="#{tripRegistrationController.processButton()}">
 				</h:commandButton>
 			</h:form>
