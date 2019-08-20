@@ -27,10 +27,22 @@
 <body>
 <ui:include src="home.xhtml" />
 	<h1>VEHICLE LIST</h1>
-
+	<h:form>
+	<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
 	<h:panelGrid columns="1" border="0">
 		<h:panelGroup id="view" layout="block" >
-			<p:dataTable var="lorry" value="#{vehicleInfoController.vechileDtos}">
+			<p:dataTable var="lorry" value="#{vehicleInfoController.vechileDtos}" id="vehicleInfo"
+			selectionMode="single" rowKey="#{lorry.registrationNumber}"
+					selection="#{vehicleInfoController.selectedVehicleInfoDto}"
+			>
+				
+			<p:ajax event="contextMenu"
+				listener="#{vehicleInfoController.oncontextMenuClick}" />
+			<p:ajax event="rowUnselect"
+				listener="#{vehicleInfoController.onRowUnselect}" />
+			
 				<p:column headerText="Registration No">
 					<h:outputText value="#{lorry.registrationNumber}" />
 				</p:column>
@@ -69,9 +81,16 @@
 					<h:outputText value="#{lorry.axile}" />
 				</p:column>
 			</p:dataTable>
+			<p:contextMenu for="vehicleInfo">
+			<p:menuitem value="Vehicle Details" update="vehicleInfo"
+				icon="pi pi-search" url="vehicleInfo.xhtml" />
+			<p:menuitem value="Delete" update="vehicleInfo"
+				actionListener="#{vehicleInfoController.deleteVehicleInfo}"
+				icon="pi pi-times" />
+		</p:contextMenu>
 		</h:panelGroup>
 	</h:panelGrid>
-
+</h:form>
 </body>
 
 </html>

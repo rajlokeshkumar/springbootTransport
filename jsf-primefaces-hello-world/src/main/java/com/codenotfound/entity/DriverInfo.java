@@ -20,6 +20,15 @@ private String mobileNumber;
 private String secondaryno;
 @DynamoDBAttribute
 private String address;
+@DynamoDBAttribute
+private String inLorryNumber;
+
+public String getInLorryNumber() {
+	return inLorryNumber;
+}
+public void setInLorryNumber(String inLorryNumber) {
+	this.inLorryNumber = inLorryNumber;
+}
 public String getDriverName() {
 	return driverName;
 }

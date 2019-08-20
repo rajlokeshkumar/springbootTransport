@@ -28,6 +28,9 @@
 <ui:include src="home.xhtml" />
 	<h1>Register Vehicle</h1>
 	<h:form>
+	<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block" styleClass="fornewline">
 				<f:view>
@@ -62,19 +65,19 @@
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>InsuranceDate</label>
-						<p:calendar value="#{vehicleInfoController.vehicleDto.insuranceDate}" 
+						<p:calendar value="#{vehicleInfoController.vehicleDto.insuranceDate}"  pattern="dd-MMM-yyyy"
 							id="insuranceDate" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>NPTAX Date</label>
-						<p:calendar value="#{vehicleInfoController.vehicleDto.npTaxDate}" 
+						<p:calendar value="#{vehicleInfoController.vehicleDto.npTaxDate}"  pattern="dd-MMM-yyyy"
 							id="nptaxDate" />
 					</h:panelGrid>
 					<br />
 					<h:panelGrid columns="2" border="0">
 						<label>QuatertaxDate</label>
-						<p:calendar value="#{vehicleInfoController.vehicleDto.quaterTaxDate}"
+						<p:calendar value="#{vehicleInfoController.vehicleDto.quaterTaxDate}" pattern="dd-MMM-yyyy"
 							id="quatertaxDate" />
 					</h:panelGrid>
 					<br />
@@ -88,7 +91,7 @@
 				</f:view>
 			</h:panelGroup>
 			<h:panelGroup layout="block" style=" margin-left: 560px;">
-				<h:commandButton value="click  me" styleClass="myButton" 
+				<h:commandButton value="submit" styleClass="myButton" 
 					action="#{vehicleInfoController.performtheAction()}">
 
 				</h:commandButton>

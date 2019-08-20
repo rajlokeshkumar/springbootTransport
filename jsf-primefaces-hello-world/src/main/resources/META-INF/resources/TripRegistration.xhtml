@@ -356,9 +356,9 @@
 				</h:panelGrid>
 				<h:panelGroup id="expenseSection" layout="block">
 
-					<p:panelGrid columns="3" border="0">
+					<h:panelGrid columns="3" border="0">
 
-						<p:panelGrid columns="2" border="0">
+						<h:panelGrid columns="2" border="0">
 
 							<h:outputLabel value="கமிசன் பில்படி"
 								styleClass="LabelforSummary" />
@@ -396,8 +396,8 @@
 									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 									render=":tripRegister:driverToGive :tripRegister:totalTollExpense :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
 							</h:inputText>
-						</p:panelGrid>
-						<p:panelGrid columns="2" border="0">
+						</h:panelGrid>
+						<h:panelGrid columns="2" border="0">
 							<h:outputLabel value="RTO செலவு" styleClass="LabelforSummary" />
 							<h:inputText id="expenseOnRTO" disabled="false"
 								value="#{tripRegistrationController.tripRegisterDto.totalexpenseonRTOandTOLL}"
@@ -440,9 +440,9 @@
 									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 									render=":tripRegister:driverToGive :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
 							</h:inputText>
-						</p:panelGrid>
+						</h:panelGrid>
 
-						<p:panelGrid columns="2" border="0">
+						<h:panelGrid columns="2" border="0">
 
 							<h:outputLabel value="மொத்த செலவு" styleClass="LabelforSummary" />
 							<h:inputText styleClass="inputtextboxBig"
@@ -477,8 +477,8 @@
 							</h:selectOneMenu>
 
 
-						</p:panelGrid>
-					</p:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
 				</h:panelGroup>
 				<br />
 				<h:commandButton value="submit" styleClass="myButton"

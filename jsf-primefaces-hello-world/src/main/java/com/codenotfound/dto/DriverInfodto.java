@@ -9,6 +9,15 @@ public class DriverInfodto {
 	private String mobileNumber;
 	private String secondaryno;
 	private String address;
+	private String inLorryNumber;
+
+	public String getInLorryNumber() {
+		return inLorryNumber;
+	}
+
+	public void setInLorryNumber(String inLorryNumber) {
+		this.inLorryNumber = inLorryNumber;
+	}
 
 	public String getDriverName() {
 		return driverName;
@@ -25,8 +34,6 @@ public class DriverInfodto {
 	public void setLicenseno(String licenseno) {
 		this.licenseno = licenseno;
 	}
-
-
 
 	public Date getJoiningdate() {
 		return joiningdate;

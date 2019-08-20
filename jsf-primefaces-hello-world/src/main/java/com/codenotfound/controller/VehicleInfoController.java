@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import com.codenotfound.dto.DriverInfodto;
 import com.codenotfound.dto.VehicleDto;
+import com.codenotfound.entity.DriverInfo;
 import com.codenotfound.entity.Vehicle;
 import com.codenotfound.repo.VehicleRepository;
 
@@ -31,8 +37,28 @@ public class VehicleInfoController implements PhaseListener {
 	private VehicleDto vehicleDto;
 
 	private List<String> vehicleLists;
-	
+
 	private List<VehicleDto> vechileDtos;
+
+	private String vehicleId;
+
+	private VehicleDto selectedVehicleInfoDto;
+
+	public VehicleDto getSelectedVehicleInfoDto() {
+		return selectedVehicleInfoDto;
+	}
+
+	public void setSelectedVehicleInfoDto(VehicleDto selectedVehicleInfoDto) {
+		this.selectedVehicleInfoDto = selectedVehicleInfoDto;
+	}
+
+	public String getVehicleId() {
+		return vehicleId;
+	}
+
+	public void setVehicleId(String vehicleId) {
+		this.vehicleId = vehicleId;
+	}
 
 	public List<VehicleDto> getVechileDtos() {
 		if (vechileDtos == null) {
@@ -73,12 +99,22 @@ public class VehicleInfoController implements PhaseListener {
 	@PostConstruct
 	public void init() {
 		getVehicleList();
+
+		if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("vehicleId") != null) {
+			String vehicleId = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("vehicleId")
+					.toString();
+			Vehicle aVehicle = this.vehicleRepository.findById(vehicleId).get();
+			BeanUtils.copyProperties(aVehicle, this.getVehicleDto());
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(vehicleId);
+		}
 	}
 
 	public void performtheAction() {
 		Vehicle aVehicle = new Vehicle();
 		BeanUtils.copyProperties(this.vehicleDto, aVehicle);
 		this.vehicleRepository.save(aVehicle);
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Vehicle Information updated"));
 	}
 
 	public void getVehicleList() {
@@ -119,4 +155,19 @@ public class VehicleInfoController implements PhaseListener {
 		return null;
 	}
 
+	public void onRowUnselect(UnselectEvent event) {
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("vehicleId");
+	}
+
+	public void deleteVehicleInfo() {
+		this.vehicleRepository.deleteById(vehicleId);
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("vehicleId");
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Vehicle Information Deleted"));
+	}
+
+	public void oncontextMenuClick(SelectEvent event) {
+		vehicleId = ((VehicleDto) event.getObject()).getRegistrationNumber();
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("vehicleId", vehicleId);
+	}
 }

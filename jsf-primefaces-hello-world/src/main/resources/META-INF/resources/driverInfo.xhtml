@@ -5,8 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	>
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>driver Info</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
@@ -25,9 +24,12 @@
 </h:head>
 
 <body>
-<ui:include src="home.xhtml" />
+	<ui:include src="home.xhtml" />
 	<h1>DRIVER INFORMATION</h1>
 	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block" styleClass="fornewline">
 
@@ -49,7 +51,7 @@
 				<br />
 				<h:panelGrid columns="2" border="0">
 					<label>JoiningDate</label>
-					<p:calendar
+					<p:calendar pattern="dd-MMM-yyyy"
 						value="#{driverInfoController.driverInfodto.joiningdate}"
 						id="joiningdate" />
 				</h:panelGrid>
@@ -80,7 +82,14 @@
 						value="#{driverInfoController.driverInfodto.address}" id="address" />
 				</h:panelGrid>
 				<br />
-
+				<label>வண்டி எண்</label>
+				<h:selectOneMenu styleClass="inputtextboxBig"
+					value="#{driverInfoController.driverInfodto.inLorryNumber}">
+					<f:selectItem itemValue="#{null}" itemLabel="--select--"
+						noSelectionOption="true" />
+					<f:selectItems value="#{driverInfoController.vehicleNo}" />
+				</h:selectOneMenu>
+				<br />
 			</h:panelGroup>
 			<h:panelGroup layout="block" style=" margin-left: 560px;">
 				<h:commandButton styleClass="myButton" value="Submit"

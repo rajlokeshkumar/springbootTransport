@@ -4,19 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.codenotfound.dto.DriverInfodto;
+import com.codenotfound.dto.TripRegisterDto;
 import com.codenotfound.entity.DriverInfo;
+import com.codenotfound.entity.TripRegister;
+import com.codenotfound.entity.Vehicle;
 import com.codenotfound.repo.DriverInfoRepo;
+import com.codenotfound.repo.VehicleRepository;
 
 @Named
 @Controller
@@ -35,7 +43,49 @@ public class DriverInfoController  implements PhaseListener {
 	
 	private List<DriverInfodto> driverInfodtos;
 	
+	private String driverInfoId;
 	
+	private DriverInfodto selectedDriverInfo;
+	@Autowired
+	private VehicleRepository vehicleRepository;
+	private List<String> vehicleNo;
+	
+	
+
+	public VehicleRepository getVehicleRepository() {
+		return vehicleRepository;
+	}
+
+	public void setVehicleRepository(VehicleRepository vehicleRepository) {
+		this.vehicleRepository = vehicleRepository;
+	}
+
+	public List<String> getVehicleNo() {
+		if(vehicleNo==null){
+			vehicleNo=new ArrayList<>();
+		}
+		return vehicleNo;
+	}
+
+	public void setVehicleNo(List<String> vehicleNo) {
+		this.vehicleNo = vehicleNo;
+	}
+
+	public DriverInfodto getSelectedDriverInfo() {
+		return selectedDriverInfo;
+	}
+
+	public void setSelectedDriverInfo(DriverInfodto selectedDriverInfo) {
+		this.selectedDriverInfo = selectedDriverInfo;
+	}
+
+	public String getDriverInfoId() {
+		return driverInfoId;
+	}
+
+	public void setDriverInfoId(String driverInfoId) {
+		this.driverInfoId = driverInfoId;
+	}
 
 	public List<DriverInfodto> getDriverInfodtos() {
 		if(this.driverInfodtos==null){
@@ -70,10 +120,23 @@ public class DriverInfoController  implements PhaseListener {
 	public DriverInfoController(){
 		
 	}
-	
+	public void getVehicleList() {
+		Iterable<Vehicle> a = this.vehicleRepository.findAll();
+		for (Vehicle b : a) {
+			this.getVehicleNo().add(b.getRegistrationNumber());
+		}
+	}
 	@PostConstruct
-	public void init(){
+	public void init() {
 		this.getDriverList();
+		this.getVehicleList();
+		if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("driverInfoId") != null) {
+			String driverinfoId = FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
+					.get("driverInfoId").toString();
+			DriverInfo aDriverInfo = this.driverInfoRepo.findById(driverinfoId).get();
+			BeanUtils.copyProperties(aDriverInfo, this.getDriverInfodto());
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(driverinfoId);
+		}
 	}
 	
 	public void getDriverList(){
@@ -107,6 +170,22 @@ public class DriverInfoController  implements PhaseListener {
 		BeanUtils.copyProperties(this.getDriverInfodto(), driverInfo);
 		this.getDriverInfoRepo().save(driverInfo);
 		this.driverInfodto=new DriverInfodto();
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Driver Information updated"));
 	}
-
+	public void onRowUnselect(UnselectEvent event) {
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("driverInfoId");
+	}
+	public void deleteDriverInfo( ){
+		this.driverInfoRepo.deleteById(driverInfoId);
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("driverInfoId");
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Driver Information Deleted"));
+	}
+	
+	public void oncontextMenuClick(SelectEvent event) {
+		driverInfoId = ((DriverInfodto) event.getObject()).getLicenseno();
+		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("driverInfoId", driverInfoId);
+	}
+	
 }
