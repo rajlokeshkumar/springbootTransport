@@ -465,7 +465,8 @@
 								disabled="true" />
 							<h:outputLabel value="status" styleClass="LabelforSummary" />
 
-							<h:selectOneMenu styleClass="inputtextboxBig"
+							<h:selectOneMenu styleClass="inputtextboxBig" required="true"
+								converterMessage="select the value" id="status"
 								value="#{tripRegistrationController.tripRegisterDto.statusOfTrip}">
 								<f:selectItem itemValue="#{null}" itemLabel="--select--"
 									noSelectionOption="true" />
@@ -475,8 +476,6 @@
 									itemLabel="AMOUNT PENDING" />
 								<f:selectItem itemValue="COMPLETED" itemLabel="COMPLETED" />
 							</h:selectOneMenu>
-
-
 						</h:panelGrid>
 					</h:panelGrid>
 				</h:panelGroup>

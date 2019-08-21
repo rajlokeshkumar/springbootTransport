@@ -135,7 +135,7 @@ public class DriverInfoController  implements PhaseListener {
 					.get("driverInfoId").toString();
 			DriverInfo aDriverInfo = this.driverInfoRepo.findById(driverinfoId).get();
 			BeanUtils.copyProperties(aDriverInfo, this.getDriverInfodto());
-			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(driverinfoId);
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("driverInfoId");
 		}
 	}
 	

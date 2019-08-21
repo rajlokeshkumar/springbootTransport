@@ -176,7 +176,7 @@ public class TripRegistrationController implements PhaseListener {
 					.get("tripRegisterId").toString();
 			TripRegister aTripRegister = this.tripRegisterRepository.findById(tripRegisterId).get();
 			assemblerFromDomain(aTripRegister);
-			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(tripRegisterId);
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("tripRegisterId");
 		}
 	}
 
@@ -577,9 +577,9 @@ public class TripRegistrationController implements PhaseListener {
 		this.getTripRegisterDto().setTotalprofitOnTrip(0);
 		calculateWages();
 		calculateTotalhireprice();
+		calculateTotalTollExepnse();
 		calculateTotalExpense();
 		calculateTotalProfit();
-		calculateTotalTollExepnse();
 		calculateDriverToGive();
 	}
 
@@ -721,9 +721,24 @@ public class TripRegistrationController implements PhaseListener {
 		if (this.getTripRegisterDto().getTotalTollExpense() == null) {
 			this.getTripRegisterDto().setTotalTollExpense(new BigDecimal(0));
 		}
+		BigDecimal aTotalAtmFasttagAmount = new BigDecimal(0);
+		for (AtmCreditDebitDto bAtmCreditDebitDto : this.getAtmCreditDebitDto()) {
+
+			if (bAtmCreditDebitDto.getAmount() != null) {
+				if (bAtmCreditDebitDto.getPaymentMode() != null
+						&& bAtmCreditDebitDto.getPaymentMode().equals("Fasttag")) {
+					aTotalAtmFasttagAmount = aTotalAtmFasttagAmount.add(bAtmCreditDebitDto.getAmount());
+				}
+
+			}
+		}
+
 		if (this.getTripRegisterDto().getBilledtollExpense() != null) {
-			this.getTripRegisterDto().setTotalTollExpense(this.getTripRegisterDto().getTotalTollExpense()
-					.add(this.getTripRegisterDto().getBilledtollExpense()));
+			this.getTripRegisterDto()
+					.setTotalTollExpense(aTotalAtmFasttagAmount.add(this.getTripRegisterDto().getBilledtollExpense()));
+		}else{
+			this.getTripRegisterDto()
+			.setTotalTollExpense(aTotalAtmFasttagAmount);
 		}
 	}
 

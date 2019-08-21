@@ -105,7 +105,7 @@ public class VehicleInfoController implements PhaseListener {
 					.toString();
 			Vehicle aVehicle = this.vehicleRepository.findById(vehicleId).get();
 			BeanUtils.copyProperties(aVehicle, this.getVehicleDto());
-			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(vehicleId);
+			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("vehicleId");
 		}
 	}
 
