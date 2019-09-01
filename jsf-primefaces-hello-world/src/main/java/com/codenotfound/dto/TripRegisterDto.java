@@ -80,7 +80,46 @@ private BigDecimal drivertoGive;
 
 private List<Advancedto> advancedtos;
 
+private BigDecimal startKm;
 
+private BigDecimal endKm;
+
+private int totalTripKm;
+
+private BigDecimal mileageofTrip;
+
+
+public BigDecimal getStartKm() {
+	return startKm;
+}
+
+public void setStartKm(BigDecimal startKm) {
+	this.startKm = startKm;
+}
+
+public BigDecimal getEndKm() {
+	return endKm;
+}
+
+public void setEndKm(BigDecimal endKm) {
+	this.endKm = endKm;
+}
+
+public int getTotalTripKm() {
+	return totalTripKm;
+}
+
+public void setTotalTripKm(int totalTripKm) {
+	this.totalTripKm = totalTripKm;
+}
+
+public BigDecimal getMileageofTrip() {
+	return mileageofTrip;
+}
+
+public void setMileageofTrip(BigDecimal mileageofTrip) {
+	this.mileageofTrip = mileageofTrip;
+}
 
 public List<Advancedto> getAdvancedtos() {
 	return advancedtos;

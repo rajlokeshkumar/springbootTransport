@@ -174,8 +174,10 @@ public class TripRegistrationController implements PhaseListener {
 		if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("tripRegisterId") != null) {
 			String tripRegisterId = FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
 					.get("tripRegisterId").toString();
-			TripRegister aTripRegister = this.tripRegisterRepository.findById(tripRegisterId).get();
-			assemblerFromDomain(aTripRegister);
+			TripRegister aTripRegister = this.tripRegisterRepository.findById(tripRegisterId).orElse(null);
+			if (aTripRegister != null) {
+				assemblerFromDomain(aTripRegister);
+			}
 			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("tripRegisterId");
 		}
 	}
@@ -191,7 +193,7 @@ public class TripRegistrationController implements PhaseListener {
 		for (int i = 0; i <= 7; i++) {
 			BeanUtils.copyProperties(pTripRegister.getAdvances().get(i), this.getTotalAdvance().get(i));
 		}
-		
+
 	}
 
 	private void preFillAdvanceDto() {
@@ -233,10 +235,8 @@ public class TripRegistrationController implements PhaseListener {
 			bAtmCreditDebitDto.setRowID("Atm Expense Row" + String.valueOf(i));
 			atmCreditDebitDtos.add(bAtmCreditDebitDto);
 		}
-		if (this.atmCreditDebitDto == null) {
 			this.atmCreditDebitDto = new ArrayList<>();
 
-		}
 		atmCreditDebitDto.addAll(atmCreditDebitDtos);
 	}
 
@@ -247,15 +247,14 @@ public class TripRegistrationController implements PhaseListener {
 			bAdvancedto.setRowID("Diesel Expense Row" + String.valueOf(i));
 			aAdvancedtos.add(bAdvancedto);
 		}
-		if (this.totalAdvance == null) {
 			this.totalAdvance = new ArrayList<>();
 
-		}
 		totalAdvance.addAll(aAdvancedtos);
 	}
 
 	private void preFillRTOandTOLLExpense() {
 		List<ExpenseonRTOandTOLLDto> aExpenseonRTOandTOLL = new ArrayList<>(8);
+		this.setExpenseonRTOandTOLL(new ArrayList<>());
 		for (int i = 0; i < 8; i++) {
 			ExpenseonRTOandTOLLDto bExpenseonRTOandTOLL = new ExpenseonRTOandTOLLDto();
 			bExpenseonRTOandTOLL.setRowID(String.valueOf(i));
@@ -290,9 +289,7 @@ public class TripRegistrationController implements PhaseListener {
 			bExpenseOnTripBilled.setRowID("Billed Expense Report" + i);
 			abilledExpense.add(bExpenseOnTripBilled);
 		}
-		if (this.billedExpense == null) {
 			this.billedExpense = new ArrayList<>();
-		}
 		this.billedExpense.addAll(abilledExpense);
 	}
 
@@ -303,10 +300,7 @@ public class TripRegistrationController implements PhaseListener {
 			bFuelDto.setRowID("Diesel Expense Row" + String.valueOf(i));
 			aFuelDto.add(bFuelDto);
 		}
-		if (this.fuelDtoForTable == null) {
 			this.fuelDtoForTable = new ArrayList<>();
-
-		}
 		paymentType.add("CREDIT");
 		paymentType.add("CASH");
 
@@ -424,6 +418,10 @@ public class TripRegistrationController implements PhaseListener {
 			}
 		}
 		this.getTotalAdvance().get(3).setAmount(aTotalAtmFasttagAmount);
+		if (this.getTripRegisterDto().getBilledtollExpense() != null) {
+			aTotalAtmFasttagAmount = aTotalAtmFasttagAmount.add(this.getTripRegisterDto().getBilledtollExpense());
+		}
+
 		this.getTripRegisterDto().setTotalTollExpense(aTotalAtmFasttagAmount);
 		this.getTotalAdvance().get(1).setAmount(atotalAtmDebit);
 		this.processAdvanceDto();
@@ -471,6 +469,8 @@ public class TripRegistrationController implements PhaseListener {
 	private void processDoneOnFuelTable(FuelDto pFuelDto) throws ParseException {
 		if (pFuelDto.getNumberofLitre() != null && pFuelDto.getPricePerlitre() != null) {
 			BigDecimal totalamount = pFuelDto.getNumberofLitre().multiply(pFuelDto.getPricePerlitre());
+			totalamount = totalamount.setScale(0, BigDecimal.ROUND_HALF_UP);
+
 			pFuelDto.setTotalAmount(totalamount);
 		} else if (pFuelDto.getNumberofLitre() != null && pFuelDto.getTotalAmount() != null) {
 			BigDecimal pricePerLitre = pFuelDto.getTotalAmount().divide(pFuelDto.getNumberofLitre(), 2,
@@ -567,6 +567,15 @@ public class TripRegistrationController implements PhaseListener {
 		tripRegister.setAtmCreditDebits(atmCreditDebits);
 		this.tripRegisterRepository.save(tripRegister);
 		this.setTripRegisterDto(null);
+		this.preFillDiesel();
+		this.preFillBilledExpese();
+		this.preFillRTOandTOLLExpense();
+		this.preFillStates();
+		this.preFilltotalAdvance();
+		this.preFillAtmCreditAndDebit();
+		this.getVehicleList();
+		this.getDriverList();
+		this.preFillAdvanceDto();
 		FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Trip has been Registered Successfully"));
 	}
@@ -581,8 +590,45 @@ public class TripRegistrationController implements PhaseListener {
 		calculateTotalExpense();
 		calculateTotalProfit();
 		calculateDriverToGive();
+		calculateMileageofTrip();
 	}
 
+	public void calculateMileageofTrip() {
+
+		if (this.getTripRegisterDto().getStartKm() != null && this.getTripRegisterDto().getEndKm() != null) {
+			this.getTripRegisterDto().setTotalTripKm(
+					(this.getTripRegisterDto().getEndKm().subtract(this.getTripRegisterDto().getStartKm())).intValue());
+			int totalNoLit = 0;
+			for (FuelDto aFuelDto : this.getFuelDtoForTable()) {
+				if (aFuelDto.getNumberofLitre() != null) {
+					totalNoLit = totalNoLit + aFuelDto.getNumberofLitre().intValue();
+				}
+			}
+			String statusString = null;
+			if("ONGOING1".equals(this.getTripRegisterDto().getStatusOfTrip())){
+				statusString="ONGOING2";
+			}
+			if("ONGOING2".equals(this.getTripRegisterDto().getStatusOfTrip())){
+				statusString="ONGOING1";
+			}
+			if (this.getTripRegisterDto().getVechileNumber() != null && statusString != null) {
+				TripRegister aTripRegister = this.tripRegisterRepository
+						.findByVechileNumberAndStatusOfTrip(this.getTripRegisterDto().getVechileNumber(), statusString)
+						.get(0);
+				int totalNoLit1 = totalNoLit;
+				for (Fuel aFuel : aTripRegister.getFuel()) {
+					if (aFuel.getNumberofLitre() != null) {
+						totalNoLit1 = totalNoLit1 + aFuel.getNumberofLitre().intValue();
+					}
+				}
+				if (totalNoLit1 != 0) {
+					this.getTripRegisterDto().setMileageofTrip((
+							BigDecimal.valueOf((float) this.getTripRegisterDto().getTotalTripKm() / totalNoLit)).setScale(2,BigDecimal.ROUND_HALF_DOWN));
+				}
+			}
+		}
+	}
+	
 	public void calculateDriverToGive() {
 		if (this.getTripRegisterDto().getDrivertoGive() == null) {
 			this.getTripRegisterDto().setDrivertoGive(new BigDecimal(0));
@@ -627,11 +673,11 @@ public class TripRegistrationController implements PhaseListener {
 			BigDecimal cleanerWage = new BigDecimal(0);
 			BigDecimal commissionOnLoad = new BigDecimal(0);
 			driverWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.09),
-					MathContext.DECIMAL32);
+					MathContext.DECIMAL32).setScale(2);
 			cleanerWage = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice()).multiply(new BigDecimal(0.025),
-					MathContext.DECIMAL32);
+					MathContext.DECIMAL32).setScale(2);
 			commissionOnLoad = BigDecimal.valueOf(this.getTripRegisterDto().getHireprice())
-					.multiply(new BigDecimal(0.05), MathContext.DECIMAL32);
+					.multiply(new BigDecimal(0.05), MathContext.DECIMAL32).setScale(2);
 
 			this.getTripRegisterDto().setCleanerWage(cleanerWage);
 			this.getTripRegisterDto().setTotalDriverWageForTrip(driverWage);
@@ -736,9 +782,8 @@ public class TripRegistrationController implements PhaseListener {
 		if (this.getTripRegisterDto().getBilledtollExpense() != null) {
 			this.getTripRegisterDto()
 					.setTotalTollExpense(aTotalAtmFasttagAmount.add(this.getTripRegisterDto().getBilledtollExpense()));
-		}else{
-			this.getTripRegisterDto()
-			.setTotalTollExpense(aTotalAtmFasttagAmount);
+		} else {
+			this.getTripRegisterDto().setTotalTollExpense(aTotalAtmFasttagAmount);
 		}
 	}
 

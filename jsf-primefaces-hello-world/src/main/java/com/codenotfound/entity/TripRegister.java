@@ -96,8 +96,47 @@ public class TripRegister {
 	private BigDecimal billedtollExpense;
 	@DynamoDBAttribute
 	private String statusOfTrip;
-	
-	
+	@DynamoDBAttribute
+	private BigDecimal startKm;
+	@DynamoDBAttribute
+	private BigDecimal endKm;
+	@DynamoDBAttribute
+	private int totalTripKm;
+	@DynamoDBAttribute
+	private BigDecimal mileageofTrip;
+
+	public BigDecimal getStartKm() {
+		return startKm;
+	}
+
+	public void setStartKm(BigDecimal startKm) {
+		this.startKm = startKm;
+	}
+
+	public BigDecimal getEndKm() {
+		return endKm;
+	}
+
+	public void setEndKm(BigDecimal endKm) {
+		this.endKm = endKm;
+	}
+
+	public int getTotalTripKm() {
+		return totalTripKm;
+	}
+
+	public void setTotalTripKm(int totalTripKm) {
+		this.totalTripKm = totalTripKm;
+	}
+
+	public BigDecimal getMileageofTrip() {
+		return mileageofTrip;
+	}
+
+	public void setMileageofTrip(BigDecimal mileageofTrip) {
+		this.mileageofTrip = mileageofTrip;
+	}
+
 	public String getStatusOfTrip() {
 		return statusOfTrip;
 	}

@@ -8,12 +8,12 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>Trip Details</title>
-	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+	<link type="text/css" rel="stylesheet" href="style/Style.css">
 	</link>
 
 	<link rel="stylesheet"
 		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
-	<link rel="stylesheet" href="/resources/demos/style.css"></link>
+	<link rel="stylesheet" href="/resources/style/style.css"></link>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script>
@@ -24,16 +24,13 @@
 </h:head>
 
 <body>
-	<ui:include src="home.xhtml" />
+	<ui:include src="template.xhtml" />
 	<h1>Trip Details</h1>
-	<h:form>
-		<p:messages id="messages" showDetail="true" closable="true">
-			<p:autoUpdate />
-		</p:messages>
+	<h:form >
 		<h:panelGrid columns="1" border="0">
-			<h:panelGroup id="view" layout="block" styleClass="fornewline">
+			<h:panelGroup id="view" layout="block" >
 
-				<h:panelGrid columns="3" border="0">
+				<h:panelGrid columns="7" border="0">
 					<label>வண்டி எண்</label>
 
 					<h:selectOneMenu styleClass="inputtextboxBig"
@@ -41,7 +38,20 @@
 						<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
 						<f:selectItems value="#{vehicleInfoController.vehicleLists}" />
 					</h:selectOneMenu>
+					<label>புரப்படும் இடம்</label>
 
+					<h:selectOneMenu styleClass="inputtextboxBig"
+						value="#{tripDetailsController.startPlace}">
+						<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
+						<f:selectItems value="#{tripDetailsController.startPlaces}" />
+					</h:selectOneMenu>
+						<label>சேரூம் இடம்</label>
+
+					<h:selectOneMenu styleClass="inputtextboxBig"
+						value="#{tripDetailsController.endPlace}">
+						<f:selectItem itemLabel="-- Select --" noSelectionOption="true" />
+						<f:selectItems value="#{tripDetailsController.endPlaces}" />
+					</h:selectOneMenu>
 					<h:commandButton styleClass="myButton" value="Submit"
 						action="#{tripDetailsController.processRequest()}">
 
@@ -53,7 +63,7 @@
 	</h:form>
 	<br />
 	<br />
-	<h:form>
+	<h:form id="tripRegisterform">
 		<p:messages id="messages1" showDetail="true" closable="true">
 			<p:autoUpdate />
 		</p:messages>
@@ -66,8 +76,8 @@
 			<f:facet name="header">
            Trip Details
         </f:facet>
-			<p:ajax event="contextMenu"
-				listener="#{tripDetailsController.oncontextMenuClick}" />
+			<p:ajax event="rowSelect"
+				listener="#{tripDetailsController.oncontextMenuClick}" update=":tripRegisterform:action :tripRegisterform:delete" />
 			<p:ajax event="rowUnselect"
 				listener="#{tripDetailsController.onRowUnselect}" />
 			<p:column headerText="வண்டி எண்" sortBy="#{trip.vechileNumber}">
@@ -112,8 +122,7 @@
 			</p:column>
 
 
-			<p:column headerText="லாபம்"
-				sortBy="#{trip.totalprofitOnTrip}">
+			<p:column headerText="லாபம்" sortBy="#{trip.totalprofitOnTrip}">
 				<h:outputText value="#{trip.totalprofitOnTrip}" />
 			</p:column>
 
@@ -122,13 +131,16 @@
 				<h:outputText value="#{trip.statusOfTrip}" />
 			</p:column>
 		</p:dataTable>
-		<p:contextMenu for="tripDetails">
-			<p:menuitem value="Trip Details" update="tripDetails"
-				icon="pi pi-search" url="TripRegistration.xhtml" />
-			<p:menuitem value="Delete" update="tripDetails"
-				actionListener="#{tripDetailsController.deleteTripDetails}"
-				icon="pi pi-times" />
-		</p:contextMenu>
+		<h:commandButton value="TripDetails" styleClass="#{tripDetailsController.disableSubmitButton==true ?'myButtonDisabled':'myButton'}" id="action"
+			style="margin-left:35%" disabled="#{tripDetailsController.disableSubmitButton}"
+			onclick="window.open('TripRegistration.xhtml');return false;">
+		</h:commandButton>
+		<h:commandButton value="Delete" styleClass="#{tripDetailsController.disableSubmitButton==true ?'myButtonDisabled':'myButton'}"  id="delete"
+			style="margin-left:5%" disabled="#{tripDetailsController.disableSubmitButton}"
+			action="#{tripDetailsController.deleteTripDetails}">
+			 <f:ajax  execute="@form"  render=":tripRegisterform:tripDetails"/>
+		</h:commandButton>
+
 	</h:form>
 
 </body>

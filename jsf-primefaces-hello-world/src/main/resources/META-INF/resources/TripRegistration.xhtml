@@ -23,13 +23,13 @@
 </h:head>
 
 <body>
-	<ui:include src="home.xhtml" />
+	<ui:include src="template.xhtml" />
 	<h1>Register a Trip</h1>
 	<h:panelGrid columns="1" border="0">
 		<h:panelGroup id="view" layout="block">
 
 			<h:form id="tripRegister">
-				<p:messages id="messages" showDetail="true" closable="true">
+				<p:messages id="messages1" showDetail="false" closable="true">
 					<p:autoUpdate />
 				</p:messages>
 				<h:panelGrid columns="2" border='0' style="margin-left:10px">
@@ -54,6 +54,8 @@
 						<label>டிரைவர் 1</label>
 						<h:selectOneMenu styleClass="inputtextboxBig" id="driverName1"
 							value="#{tripRegistrationController.tripRegisterDto.driverName1}">
+							<f:selectItem itemValue="#{null}" itemLabel="--select--"
+								noSelectionOption="true" />
 							<f:selectItems value="#{tripRegistrationController.driverName}" />
 						</h:selectOneMenu>
 
@@ -63,11 +65,12 @@
 							validatorMessage="Enter a valid Goods name"
 							value="#{tripRegistrationController.tripRegisterDto.goodsName}"
 							styleClass="inputtextboxBig">
-							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
 						</h:inputText>-
 						<label>டிரைவர் 2</label>
 						<h:selectOneMenu styleClass="inputtextboxBig" id="driverName2"
 							value="#{tripRegistrationController.tripRegisterDto.driverName2}">
+							<f:selectItem itemValue="#{null}" itemLabel="--select--"
+								noSelectionOption="true" />
 							<f:selectItems value="#{tripRegistrationController.driverName}" />
 						</h:selectOneMenu>
 						<label>எடை(டண்)</label>
@@ -101,7 +104,6 @@
 							validatorMessage="Enter the valid start place"
 							value="#{tripRegistrationController.tripRegisterDto.startPlace}"
 							styleClass="inputtextboxBig">
-							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
 						</h:inputText>
 						<label>லோடு அட்வான்ஸ்</label>
 						<h:inputText id="loadAdvance"
@@ -118,7 +120,6 @@
 							validatorMessage="Enter the valid Endplace"
 							value="#{tripRegistrationController.tripRegisterDto.endPlace}"
 							styleClass="inputtextboxBig">
-							<f:validateRegex pattern="^[a-zA-Z0-9]*" />
 						</h:inputText>
 						<label>ரிட்டன் வாடகை</label>
 						<h:inputText id="Remaininghireprice"
@@ -128,7 +129,6 @@
 							<f:ajax event="change"
 								listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
 								render=":tripRegister:driverToGive  :tripRegister:commission :tripRegister:cleanerWage :tripRegister:totaldriverWage :tripRegister:totalProfitOnTrip :tripRegister:totalIncomewithAdvance tripRegister:totalExpenseForTrip "></f:ajax>
-
 						</h:inputText>
 						<label>புரப்படும் தேதி</label>
 						<p:calendar id="tripStartDate" pattern="dd-MMM-yyyy"
@@ -150,10 +150,10 @@
       						 </f:facet>
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:messages,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:messages1,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:messages" />
+							update=":tripRegister:messages1" />
 
 
 						<p:column headerText="தேவை">
@@ -197,10 +197,10 @@
 
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:driverToGive :tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:driverToGive :tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages1,:tripRegister:totalFuelExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:messages" />
+							update=":tripRegister:messages1" />
 
 						<p:column headerText="தேதி">
 							<p:cellEditor>
@@ -300,10 +300,10 @@
 
 						<p:ajax event="rowEdit"
 							listener="#{tripRegistrationController.onRowEdit}"
-							update=":tripRegister:driverToGive :tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
+							update=":tripRegister:driverToGive :tripRegister:totalTollExpense,:tripRegister:vehicleAdvance,:tripRegister:totalAdvance,:tripRegister:messages1,:tripRegister:totalBilledExpense,:tripRegister:totalProfitOnTrip,:tripRegister:totalIncomewithAdvance,tripRegister:totalExpenseForTrip" />
 						<p:ajax event="rowEditCancel"
 							listener="#{tripRegistrationController.onRowCancel}"
-							update=":tripRegister:messages" />
+							update=":tripRegister:messages1" />
 
 
 						<p:column headerText="தேதி">
@@ -356,7 +356,7 @@
 				</h:panelGrid>
 				<h:panelGroup id="expenseSection" layout="block">
 
-					<h:panelGrid columns="3" border="0">
+					<h:panelGrid columns="4" border="0">
 
 						<h:panelGrid columns="2" border="0">
 
@@ -463,7 +463,7 @@
 							<h:inputText styleClass="inputtextboxBig" id="driverToGive"
 								value="#{tripRegistrationController.tripRegisterDto.drivertoGive}"
 								disabled="true" />
-							<h:outputLabel value="status" styleClass="LabelforSummary" />
+							<h:outputLabel value="STATUS" styleClass="LabelforSummary" />
 
 							<h:selectOneMenu styleClass="inputtextboxBig" required="true"
 								converterMessage="select the value" id="status"
@@ -471,12 +471,46 @@
 								<f:selectItem itemValue="#{null}" itemLabel="--select--"
 									noSelectionOption="true" />
 								<f:selectItem itemValue="STARTED" itemLabel="STARTED" />
-								<f:selectItem itemValue="ONGOING" itemLabel="ONGOING" />
+								<f:selectItem itemValue="ONGOING1" itemLabel="ONGOING1" />
+								<f:selectItem itemValue="ONGOING2" itemLabel="ONGOING2" />
 								<f:selectItem itemValue="AMOUNT PENDING"
 									itemLabel="AMOUNT PENDING" />
 								<f:selectItem itemValue="COMPLETED" itemLabel="COMPLETED" />
 							</h:selectOneMenu>
 						</h:panelGrid>
+						
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="அரம்ப KM" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig"
+								id="startKm"
+								value="#{tripRegistrationController.tripRegisterDto.startKm}"
+								disabled="false" >
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:totalTripKm :tripRegister:mileageofTrip"></f:ajax>
+								</h:inputText>
+							<h:outputLabel value="முடிவு KM" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig"
+								id="endKm"
+								value="#{tripRegistrationController.tripRegisterDto.endKm}"
+								disabled="false" >
+								<f:ajax event="change"
+									listener="#{tripRegistrationController.calculateBaseOnInputdata()}"
+									render=":tripRegister:totalTripKm :tripRegister:mileageofTrip"></f:ajax>
+								</h:inputText>
+							<h:outputLabel value="மொத்தKm" styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig" id="totalTripKm"
+								value="#{tripRegistrationController.tripRegisterDto.totalTripKm}"
+								disabled="false" />
+							<h:outputLabel value="மைலேஜ்"
+								styleClass="LabelforSummary" />
+							<h:inputText styleClass="inputtextboxBig" id="mileageofTrip"
+								value="#{tripRegistrationController.tripRegisterDto.mileageofTrip}"
+								disabled="true" />
+						
+						</h:panelGrid>
+						
 					</h:panelGrid>
 				</h:panelGroup>
 				<br />

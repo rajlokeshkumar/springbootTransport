@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+	<h:head>
+		<title>Home</title>
+		<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+		</link>
+
+		
+
+		
+	</h:head>
+
+	<body>
+		<h:form>
+
+			<p:menubar>
+				<p:menuitem value="Home" url="home.xhtml" />
+				<p:submenu label="Trip">
+					<p:menuitem value="Trip Registration" url="TripRegistration.xhtml" />
+					<p:separator />
+					<p:menuitem value="Trip Details" url="TripDetails.xhtml" />
+				</p:submenu>
+
+				<p:submenu label="Vehicle">
+					<p:menuitem value="Vehicle List" url="vehicleList.xhtml" />
+					<p:menuitem value="Vehicle info" url="vehicleInfo.xhtml" />
+				</p:submenu>
+
+				<p:submenu label="Driver">
+					<p:menuitem value="Driver List" url="driverList.xhtml" />
+					<p:menuitem value="Driver info" url="driverInfo.xhtml" />
+				</p:submenu>
+
+
+				<f:facet name="options">
+					<p:inputText style="margin:1px 10px 1px 1px;" placeholder="Search" />
+					<p:commandButton type="button" value="Logout" />
+				</f:facet>
+			</p:menubar>
+
+		</h:form>
+	</body>
+
+</ui:composition>
