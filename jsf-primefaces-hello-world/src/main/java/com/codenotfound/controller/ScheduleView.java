@@ -15,7 +15,6 @@ import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import org.springframework.beans.BeanUtils;
@@ -57,8 +56,8 @@ public class ScheduleView implements Serializable {
 		eventModel = new DefaultScheduleModel();
 		for (ScheduleModelDomain aScheduleModelDomain : this.scheduleRepo.findAll()) {
 			ScheduleEvent aevent = new DefaultScheduleEvent();
-			BeanUtils.copyProperties(aScheduleModelDomain, aevent);
 			eventModel.addEvent(aevent);
+			BeanUtils.copyProperties(aScheduleModelDomain, aevent);
 		}
 	}
 
@@ -88,13 +87,13 @@ public class ScheduleView implements Serializable {
 		return lazyEventModel;
 	}
 
-	private Calendar today() {
+/*	private Calendar today() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
 
 		return calendar;
 	}
-
+*/
 
 
 	public ScheduleEvent getEvent() {
@@ -116,6 +115,13 @@ public class ScheduleView implements Serializable {
 		event = new DefaultScheduleEvent();
 	}
 
+	public void deleteEvent() {
+		if (event.getId() != null) {
+			scheduleRepo.deleteById(event.getId());
+			eventModel.deleteEvent(event);
+			event = new DefaultScheduleEvent();
+		}
+	}
 	public void onEventSelect(SelectEvent selectEvent) {
 		event = (ScheduleEvent) selectEvent.getObject();
 	}
