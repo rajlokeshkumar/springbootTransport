@@ -2,53 +2,35 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+ xmlns:h="http://java.sun.com/jsf/html"
+	 xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
 	>
-	<h:head>  
 
-    </h:head> 
-    
- <ui:include src="template.xhtml" />   
-<script type="text/javascript">
-    PrimeFaces.locales['tr'] = {
-        closeText: 'kapat',
-        prevText: 'geri',
-        nextText: 'ileri',
-        currentText: 'bugün',
-        monthNames: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran',
-            'Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
-        monthNamesShort: ['Oca','Şub','Mar','Nis','May','Haz',
-            'Tem','Ağu','Eyl','Eki','Kas','Ara'],
-        dayNames: ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'],
-        dayNamesShort: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
-        dayNamesMin: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
-        weekHeader: 'Hf',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: '',
-        month: 'Ay',
-        week: 'Hafta',
-        day: 'Gün',
-        allDayText : 'Tüm Gün'
-    };
-</script>
+
+<h:head>
+	<title>Trip Details</title>
+<ui:include src="template.xhtml" />
+	
 <style type="text/css">
     .value {
-        width: 800px;
+        width: 1000px;
     }
 </style>
+
+</h:head>
+
+
+
  
  
 <h:form>
     <p:growl id="messages" showDetail="true" />
       
-    <h:panelGrid columnClasses="value" style="margin-left:200px">
-        <h3 style="margin-top: 0;margin-left:350px">SCHEDULE</h3>
-        <p:schedule id="schedule" value="#{scheduleView.eventModel}" widgetVar="myschedule" timeZone="GMT+2">
+    <h:panelGrid columnClasses="value">
+        <h1 style="padding-left:200px"> Schedule</h1>
+        <p:schedule id="schedule" value="#{scheduleView.eventModel}"  style="padding-left:200px" widgetVar="myschedule" timeZone="GMT+2">
  
             <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
             <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
@@ -56,7 +38,7 @@
             <p:ajax event="eventResize" listener="#{scheduleView.onEventResize}" update="messages" />
  
         </p:schedule>
-
+ 
     </h:panelGrid>
      
     <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
