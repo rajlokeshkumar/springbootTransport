@@ -4,17 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>driver Info</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
 	</link>
 
-	<link rel="stylesheet"
-		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
-	<link rel="stylesheet" href="/resources/demos/style.css"></link>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
 	<script>
 		$(function() {
 			$("#datepicker").datepicker();
@@ -23,8 +20,12 @@
 </h:head>
 
 <body>
+	<ui:include src="template.xhtml" />
 	<h1>DRIVER INFORMATION</h1>
 	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block" styleClass="fornewline">
 
@@ -46,7 +47,7 @@
 				<br />
 				<h:panelGrid columns="2" border="0">
 					<label>JoiningDate</label>
-					<p:calendar
+					<p:calendar pattern="dd-MMM-yyyy"
 						value="#{driverInfoController.driverInfodto.joiningdate}"
 						id="joiningdate" />
 				</h:panelGrid>
@@ -77,7 +78,14 @@
 						value="#{driverInfoController.driverInfodto.address}" id="address" />
 				</h:panelGrid>
 				<br />
-
+				<label>வண்டி எண்</label>
+				<h:selectOneMenu styleClass="inputtextboxBig"
+					value="#{driverInfoController.driverInfodto.inLorryNumber}">
+					<f:selectItem itemValue="#{null}" itemLabel="--select--"
+						noSelectionOption="true" />
+					<f:selectItems value="#{driverInfoController.vehicleNo}" />
+				</h:selectOneMenu>
+				<br />
 			</h:panelGroup>
 			<h:panelGroup layout="block" style=" margin-left: 560px;">
 				<h:commandButton styleClass="myButton" value="Submit"

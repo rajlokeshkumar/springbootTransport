@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	
+	<title>Queue Status</title>
+	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+	</link>
+
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+	<ui:include src="template.xhtml" />
+</h:head>
+
+<body>
+
+	<h1>Queue List</h1>
+	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block">
+				<p:dataTable var="quaryDetails"
+					value="#{queryDetailsController.queryResponseDtos}" id="quaryDetails"
+					>
+
+
+					<p:column headerText="Name" >
+						<h:outputText value="#{quaryDetails.name}" />
+					</p:column>
+
+					<p:column headerText="RiverBedName">
+						<h:outputText value="#{quaryDetails.riverBedName}" />
+					</p:column>
+
+			
+
+					<p:column headerText="RevenueVillageName">
+						<h:outputText value="#{quaryDetails.revenueVillageName}" />
+					</p:column>
+
+					<p:column headerText="District">
+						<h:outputText value="#{quaryDetails.district}" />
+					</p:column>
+
+
+					<p:column headerText="QueueNumber" sortBy="#{quaryDetails.runningQueueNumber}">
+						<h:outputText value="#{quaryDetails.runningQueueNumber}" />
+					</p:column>
+
+					<p:column headerText="BalanceSandUnits" sortBy="#{quaryDetails.balanceSandUnits}">
+						<h:outputText value="#{quaryDetails.balanceSandUnits}" />
+					</p:column>
+					<p:column headerText="QuarryTypeName">
+						<h:outputText value="#{quaryDetails.quarryTypeName}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	>
+<h:head>
+	<title>Vehicle Info</title>
+	<link type="text/css" rel="stylesheet" href="/style/Style.css">
+	</link>
+
+	
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+</h:head>
+
+<body>
+<ui:include src="template.xhtml" />
+	<h1>Register Vehicle</h1>
+	<h:form enctype="multipart/form-data">
+	<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block" styleClass="fornewline">
+				<f:view>
+
+					<h:panelGrid columns="2" border="0">
+						<label>DocumentFor</label>
+						<h:inputText
+							value="#{fileuploadController.fileuploadDto.documentFor}"  styleClass="inputtextboxBig"
+							id="documentFor">
+							<!--  <f:ajax onevent="focus" listener="#{vehicleInfoController.performtheAction()}" render="inputName" /> -->
+						</h:inputText>
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>DocumentHolderName</label>
+						<h:inputText value="#{fileuploadController.fileuploadDto.documentHolderName}" styleClass="inputtextboxBig"
+							id="documentHolderName" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>DocumentCategory</label>
+
+						<h:inputText value="#{fileuploadController.fileuploadDto.documentCategory}" styleClass="inputtextboxBig"
+							id="documentCategory" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" border="0">
+						<label>DocumentFile</label>
+						<p:fileUpload value="#{fileuploadController.fileuploadDto.file}" mode="simple" skinSimple="true" 
+							id="documentFile" />
+					</h:panelGrid>
+					<br />
+				
+					
+
+				</f:view>
+			</h:panelGroup>
+			<h:panelGroup layout="block" style=" margin-left: 560px;">
+				<h:commandButton value="submit" styleClass="myButton" 
+					action="#{fileuploadController.uploadFile()}">
+
+				</h:commandButton>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</body>
+
+</html>

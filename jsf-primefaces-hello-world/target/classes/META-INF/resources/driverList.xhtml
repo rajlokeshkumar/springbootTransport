@@ -4,17 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
 	<title>Driver List</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
 	</link>
 
-	<link rel="stylesheet"
-		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
-	<link rel="stylesheet" href="/resources/demos/style.css"></link>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
 	<script>
 		$(function() {
 			$("#datepicker").datepicker();
@@ -23,40 +20,65 @@
 </h:head>
 
 <body>
+	<ui:include src="template.xhtml" />
 	<h1>DRIVER LIST</h1>
+	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block">
+				<p:dataTable var="driver"
+					value="#{driverInfoController.driverInfodtos}" id="driverInfo"
+					selectionMode="single" rowKey="#{driver.licenseno}"
+					selection="#{driverInfoController.selectedDriverInfo}">
 
-	<h:panelGrid columns="1" border="0">
-		<h:panelGroup id="view" layout="block" >
-			<p:dataTable var="driver" value="#{driverInfoController.driverInfodtos}">
-				<p:column headerText="DriverName">
-					<h:outputText value="#{driver.driverName}" />
-				</p:column>
+					<p:ajax event="contextMenu"
+						listener="#{driverInfoController.oncontextMenuClick}" />
+					<p:ajax event="rowUnselect"
+						listener="#{driverInfoController.onRowUnselect}" />
 
-				<p:column headerText="Licenseno">
-					<h:outputText value="#{driver.licenseno}" />
-				</p:column>
+					<p:column headerText="DriverName">
+						<h:outputText value="#{driver.driverName}" />
+					</p:column>
 
-				<p:column headerText="Joiningdate">
-					<h:outputText value="#{driver.joiningdate}" />
-				</p:column>
+					<p:column headerText="Licenseno">
+						<h:outputText value="#{driver.licenseno}" />
+					</p:column>
 
-				<p:column headerText="MobileNumber">
-					<h:outputText value="#{driver.mobileNumber}" />
-				</p:column>
+					<p:column headerText="Joiningdate">
+						<h:outputText value="#{driver.joiningdate}">
+							<f:convertDateTime pattern="dd-MMM-yyyy" />
+						</h:outputText>
+					</p:column>
 
-				<p:column headerText="Secondaryno">
-					<h:outputText value="#{driver.secondaryno}" />
-				</p:column>
+					<p:column headerText="MobileNumber">
+						<h:outputText value="#{driver.mobileNumber}" />
+					</p:column>
+
+					<p:column headerText="Secondaryno">
+						<h:outputText value="#{driver.secondaryno}" />
+					</p:column>
 
 
-				<p:column headerText="Address">
-					<h:outputText value="#{driver.address}" />
-				</p:column>
+					<p:column headerText="Address">
+						<h:outputText value="#{driver.address}" />
+					</p:column>
 
-			</p:dataTable>
-		</h:panelGroup>
-	</h:panelGrid>
-
+					<p:column headerText="lorry Number">
+						<h:outputText value="#{driver.inLorryNumber}" />
+					</p:column>
+				</p:dataTable>
+				<p:contextMenu for="driverInfo">
+					<p:menuitem value="Driver Details" update="driverInfo"
+						icon="pi pi-search" url="driverInfo.xhtml" />
+					<p:menuitem value="Delete" update="driverInfo"
+						actionListener="#{driverInfoController.deleteDriverInfo}"
+						icon="pi pi-times" />
+				</p:contextMenu>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
 </body>
 
 </html>

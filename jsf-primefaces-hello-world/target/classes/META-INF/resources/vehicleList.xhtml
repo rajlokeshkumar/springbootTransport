@@ -4,17 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	>
 <h:head>
 	<title>Vechile List</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
 	</link>
 
-	<link rel="stylesheet"
-		href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
-	<link rel="stylesheet" href="/resources/demos/style.css"></link>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
 	<script>
 		$(function() {
 			$("#datepicker").datepicker();
@@ -23,11 +21,24 @@
 </h:head>
 
 <body>
+<ui:include src="template.xhtml" />
 	<h1>VEHICLE LIST</h1>
-
+	<h:form>
+	<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
 	<h:panelGrid columns="1" border="0">
 		<h:panelGroup id="view" layout="block" >
-			<p:dataTable var="lorry" value="#{vehicleInfoController.vechileDtos}">
+			<p:dataTable var="lorry" value="#{vehicleInfoController.vechileDtos}" id="vehicleInfo"
+			selectionMode="single" rowKey="#{lorry.registrationNumber}"
+					selection="#{vehicleInfoController.selectedVehicleInfoDto}"
+			>
+				
+			<p:ajax event="contextMenu"
+				listener="#{vehicleInfoController.oncontextMenuClick}" />
+			<p:ajax event="rowUnselect"
+				listener="#{vehicleInfoController.onRowUnselect}" />
+			
 				<p:column headerText="Registration No">
 					<h:outputText value="#{lorry.registrationNumber}" />
 				</p:column>
@@ -41,16 +52,22 @@
 				</p:column>
 
 				<p:column headerText="InsuranceDate">
-					<h:outputText value="#{lorry.insuranceDate}" />
+					<h:outputText value="#{lorry.insuranceDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" /> 	
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="NpTaxDate">
-					<h:outputText value="#{lorry.npTaxDate}" />
+					<h:outputText value="#{lorry.npTaxDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" /> 	
+					</h:outputText>
 				</p:column>
 
 
 				<p:column headerText="QuaterTaxDate">
-					<h:outputText value="#{lorry.quaterTaxDate}" />
+					<h:outputText value="#{lorry.quaterTaxDate}" >
+					<f:convertDateTime pattern="dd-MMM-yyyy" />
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="EngineNumber">
@@ -60,9 +77,16 @@
 					<h:outputText value="#{lorry.axile}" />
 				</p:column>
 			</p:dataTable>
+			<p:contextMenu for="vehicleInfo">
+			<p:menuitem value="Vehicle Details" update="vehicleInfo"
+				icon="pi pi-search" url="vehicleInfo.xhtml" />
+			<p:menuitem value="Delete" update="vehicleInfo"
+				actionListener="#{vehicleInfoController.deleteVehicleInfo}"
+				icon="pi pi-times" />
+		</p:contextMenu>
 		</h:panelGroup>
 	</h:panelGrid>
-
+</h:form>
 </body>
 
 </html>
