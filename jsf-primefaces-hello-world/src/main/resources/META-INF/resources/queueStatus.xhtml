@@ -7,7 +7,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
-	
+
 	<title>Queue Status</title>
 	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
 	</link>
@@ -30,19 +30,15 @@
 		<h:panelGrid columns="1" border="0">
 			<h:panelGroup id="view" layout="block">
 				<p:dataTable var="quaryDetails"
-					value="#{queryDetailsController.queryResponseDtos}" id="quaryDetails"
-					>
-
-
-					<p:column headerText="Name" >
+					value="#{queryDetailsController.queryResponseDtos}"
+					id="quaryDetails">
+					<p:column headerText="Name">
 						<h:outputText value="#{quaryDetails.name}" />
 					</p:column>
 
 					<p:column headerText="RiverBedName">
 						<h:outputText value="#{quaryDetails.riverBedName}" />
 					</p:column>
-
-			
 
 					<p:column headerText="RevenueVillageName">
 						<h:outputText value="#{quaryDetails.revenueVillageName}" />
@@ -52,12 +48,13 @@
 						<h:outputText value="#{quaryDetails.district}" />
 					</p:column>
 
-
-					<p:column headerText="QueueNumber" sortBy="#{quaryDetails.runningQueueNumber}">
+					<p:column headerText="QueueNumber"
+						sortBy="#{quaryDetails.runningQueueNumber}">
 						<h:outputText value="#{quaryDetails.runningQueueNumber}" />
 					</p:column>
 
-					<p:column headerText="BalanceSandUnits" sortBy="#{quaryDetails.balanceSandUnits}">
+					<p:column headerText="BalanceSandUnits"
+						sortBy="#{quaryDetails.balanceSandUnits}">
 						<h:outputText value="#{quaryDetails.balanceSandUnits}" />
 					</p:column>
 					<p:column headerText="QuarryTypeName">

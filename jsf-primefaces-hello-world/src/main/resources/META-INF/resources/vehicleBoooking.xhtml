@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<title>Booking</title>
+	<link type="text/css" rel="stylesheet" href="../../style/Style.css">
+	</link>
+
+
+	<script>
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
+</h:head>
+
+<body>
+	<ui:include src="template.xhtml" />
+	<h1>Booking Information</h1>
+	<p:messages id="messages" showDetail="true" closable="true">
+		<p:autoUpdate />
+	</p:messages>
+	<h:form id="form1">
+		<h:panelGrid columns="1" border="0">
+			<h:panelGroup id="view" layout="block">
+				<p:dataTable var="bookingDto"
+					style="text-align:center;padding:12px;height:250px"
+					value="#{bookingInformatonController.bookingInfoDtos}"
+					id="bookingInfo" selectionMode="single"
+					rowKey="#{bookingDto.lorryNo}"
+					selection="#{bookingInformatonController.selectedBookingInfo}">
+					<p:ajax event="rowSelect" listener="#{bookingInformatonController.onRowselect}"
+						update=":form1:mobileNo,:form1:ownerName,:form1:queueNumber,:form1:queueNumber,:form1:assignedName,:form1:currentBookingDate,:form1:nextBookingDate,
+						:form1:paymentStatus,:form1:queryToBook,:form1:paymentAmount,form1:lorryNo,form1:delete" />
+					<p:ajax event="rowUnselect"
+						listener="#{bookingInformatonController.onRowUnselect}"
+						update=":form1:mobileNo,:form1:ownerName,:form1:queueNumber,:form1:queueNumber,:form1:assignedName,:form1:currentBookingDate,:form1:nextBookingDate,
+						:form1:paymentStatus,:form1:queryToBook,:form1:paymentAmount,form1:lorryNo,form1:delete" />
+
+					<p:column headerText="OwnerName">
+						<h:outputText value="#{bookingDto.ownerName}" />
+					</p:column>
+
+					<p:column headerText="lorryNo">
+						<h:outputText value="#{bookingDto.lorryNo}" />
+					</p:column>
+					<p:column headerText="mobileNo">
+						<h:outputText value="#{bookingDto.mobileNo}" />
+					</p:column>
+
+					<p:column headerText="queueNumber">
+						<h:outputText value="#{bookingDto.queueNumber}" />
+					</p:column>
+
+					<p:column headerText="currentBookingDate">
+						<h:outputText value="#{bookingDto.currentBookingDate}">
+							<f:convertDateTime pattern="dd-MMM-yyyy" timeZone="IST" />
+						</h:outputText>
+					</p:column>
+
+
+					<p:column headerText="nextBookingDate">
+						<h:outputText value="#{bookingDto.nextBookingDate}">
+							<f:convertDateTime pattern="dd-MMM-yyyy" timeZone="IST" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="assignedName" sortBy="#{bookingDto.assignedName}">
+						<h:outputText value="#{bookingDto.assignedName}" />
+					</p:column>
+
+					<p:column headerText="payment">
+						<h:outputText value="#{bookingDto.paymentStatus}" />
+					</p:column>
+
+					<p:column headerText="queryToBook">
+						<h:outputText value="#{bookingDto.queryToBook}" />
+					</p:column>
+					<p:column headerText="paymentAmount">
+						<h:outputText value="#{bookingDto.paymentAmount}" />
+					</p:column>
+				</p:dataTable>
+
+
+				<h:panelGroup id="view1" layout="block">
+					<h:panelGrid columns="6" border="0">
+						<h:panelGrid columns="1" border="0">
+							<label>OwnerName</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.ownerName}"
+								id="ownerName" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>MobileNo</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.mobileNo}"
+								id="mobileNo" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>queueNumber</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.queueNumber}"
+								id="queueNumber" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>AssignedName</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.assignedName}"
+								id="assignedName" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>LorryNo</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.lorryNo}"
+								id="lorryNo" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>BookedDate</label>
+							<p:calendar
+								value="#{bookingInformatonController.selectedBookingInfo.currentBookingDate}"
+								pattern="dd-MMM-yyyy" id="currentBookingDate" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>NextBookingDate</label>
+							<p:calendar
+								value="#{bookingInformatonController.selectedBookingInfo.nextBookingDate}"
+								pattern="dd-MMM-yyyy" id="nextBookingDate" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>Payment</label>
+							<h:selectOneMenu styleClass="inputtextboxBig" id="paymentStatus"
+								value="#{bookingInformatonController.selectedBookingInfo.paymentStatus}">
+								<f:selectItem itemLabel="PAID" itemValue="PAID" />
+								<f:selectItem itemLabel="NOT PAID"  itemValue="NOT PAID"/>
+								<f:selectItem itemLabel="PAID THIRD PARTY" itemValue="PAID THIRD PARTY"/>
+							</h:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>QueryToBook</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.queryToBook}"
+								id="queryToBook" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" border="0">
+							<label>PaymentAmount</label>
+							<h:inputText
+								value="#{bookingInformatonController.selectedBookingInfo.paymentAmount}"
+								id="paymentAmount" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:panelGroup>
+
+				<h:commandButton value="Save" type="submit" id="action"
+					style="margin-left:32%" styleClass="myButton"
+					action="#{bookingInformatonController.addRecord()}">
+				</h:commandButton>
+		
+				<h:commandButton value="Delete" type="submit" id="delete"
+					style="margin-left:2%" styleClass="#{bookingInformatonController.disableDeleteButton==false ?'myButtonDisabled':'myButton'}"
+					disabled="#{!bookingInformatonController.disableDeleteButton}"
+					action="#{bookingInformatonController.deleteRecord()}">
+				</h:commandButton>
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</body>
+
+</html>
