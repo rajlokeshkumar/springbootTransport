@@ -1,50 +1,135 @@
- static class DataTransferTask implements Runnable {
-        private final ResultSet resultSet;
-        private final String tableName;
-        private final int rowCount;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-        public DataTransferTask(ResultSet resultSet, String tableName, int rowCount) {
-            this.resultSet = resultSet;
-            this.tableName = tableName;
-            this.rowCount = rowCount;
-        }
-
-        @Override
-        public void run() {
-            int insertedRows = 0;
-            try (Connection pgConn = pgDataSource.getConnection()) {
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                
-                StringBuilder insertQuery = new StringBuilder("INSERT INTO " + tableName + " (");
-                for (int i = 1; i <= columnCount; i++) {
-                    insertQuery.append(metaData.getColumnName(i));
-                    if (i < columnCount) insertQuery.append(", ");
+public class Db2ToPostgres {
+    private static final Logger logger = LoggerFactory.getLogger(Db2ToPostgres.class);
+    private static final String LOG_FILE = "data_transfer_log.csv";
+    
+    private static final String DB2_URL = "jdbc:db2://your_db2_host:50000/YOUR_DB";
+    private static final String DB2_USER = "your_db2_user";
+    private static final String DB2_PASSWORD = "your_db2_password";
+    
+    private static final String POSTGRES_URL = "jdbc:postgresql://your_pg_host:5432/YOUR_DB";
+    private static final String POSTGRES_USER = "your_pg_user";
+    private static final String POSTGRES_PASSWORD = "your_pg_password";
+    
+    private static final String SCHEMA_NAME = "your_schema"; // Global schema name
+    private static final int PAGE_SIZE = 100000;
+    private static final int THREAD_COUNT = 10;
+    private static final List<String> TABLE_NAMES = Arrays.asList("table1", "table2", "table3", "table4", "table5");
+    
+    private static HikariDataSource db2DataSource;
+    private static HikariDataSource pgDataSource;
+    
+    public static void main(String[] args) {
+        setupConnectionPools();
+        ExecutorService tableExecutor = Executors.newFixedThreadPool(TABLE_NAMES.size());
+        
+        for (String tableName : TABLE_NAMES) {
+            tableExecutor.execute(() -> {
+                try {
+                    transferData(tableName);
+                } catch (Exception e) {
+                    logger.error("Error processing table: " + tableName, e);
+                    logToFile(tableName, 0, 0, LocalDateTime.now(), LocalDateTime.now(), 0, "ERROR");
                 }
-                insertQuery.append(") VALUES (");
-                insertQuery.append("?, ".repeat(columnCount - 1)).append("?)");
-                
-                try (PreparedStatement pstmt = pgConn.prepareStatement(insertQuery.toString())) {
-                    int count = 0;
-                    while (resultSet.next()) {
-                        for (int i = 1; i <= columnCount; i++) {
-                            pstmt.setObject(i, resultSet.getObject(i));
-                        }
-                        pstmt.addBatch();
-                        count++;
-                        insertedRows++;
-                        
-                        if (count % BATCH_SIZE == 0) {
-                            pstmt.executeBatch();
-                            pgConn.commit();
-                        }
-                    }
-                    pstmt.executeBatch();
-                    pgConn.commit();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            System.out.printf("Table: %s | Rows Inserted: %d/%d\n", tableName, insertedRows, rowCount);
+            });
         }
+        
+        tableExecutor.shutdown();
     }
+    
+    private static void setupConnectionPools() {
+        HikariConfig db2Config = new HikariConfig();
+        db2Config.setJdbcUrl(DB2_URL);
+        db2Config.setUsername(DB2_USER);
+        db2Config.setPassword(DB2_PASSWORD);
+        db2Config.setMaximumPoolSize(THREAD_COUNT);
+        db2DataSource = new HikariDataSource(db2Config);
+
+        HikariConfig pgConfig = new HikariConfig();
+        pgConfig.setJdbcUrl(POSTGRES_URL);
+        pgConfig.setUsername(POSTGRES_USER);
+        pgConfig.setPassword(POSTGRES_PASSWORD);
+        pgConfig.setMaximumPoolSize(THREAD_COUNT);
+        pgDataSource = new HikariDataSource(pgConfig);
+    }
+    
+    private static void transferData(String tableName) {
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        LocalDateTime startTime = LocalDateTime.now();
+        int sourceCount = 0;
+        int destinationCountBefore = 0;
+        int destinationCountAfter = 0;
+        String status = "MISMATCH";
+        
+        try (Connection pgConn = pgDataSource.getConnection();
+             Statement countStmt = pgConn.createStatement()) {
+            ResultSet countRs = countStmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
+            if (countRs.next()) {
+                destinationCountBefore = countRs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching destination count before deletion for table: " + tableName, e);
+        }
+        
+        try (Connection pgConn = pgDataSource.getConnection();
+             Statement deleteStmt = pgConn.createStatement()) {
+            deleteStmt.executeUpdate("DELETE FROM " + SCHEMA_NAME + "." + tableName);
+            pgConn.commit();
+            logger.info("Existing data deleted from table: " + tableName);
+        } catch (SQLException e) {
+            logger.error("Error deleting data from table: " + tableName, e);
+            throw new RuntimeException("Failed to delete data from " + tableName, e);
+        }
+        
+        try (Connection db2Conn = db2DataSource.getConnection();
+             Statement stmt = db2Conn.createStatement()) {
+            ResultSet countRs = stmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
+            if (countRs.next()) {
+                sourceCount = countRs.getInt(1);
+            }
+            
+            for (int offset = 0; offset < sourceCount; offset += PAGE_SIZE) {
+                final int currentOffset = offset;
+                executor.execute(() -> fetchAndInsertData(tableName, currentOffset));
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching total count for table: " + tableName, e);
+            throw new RuntimeException("Failed to fetch data count from " + tableName, e);
+        }
+        
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            // Wait for all tasks to finish
+        }
+        
+        LocalDateTime endTime = LocalDateTime.now();
+        
+        try (Connection pgConn = pgDataSource.getConnection();
+             Statement countStmt = pgConn.createStatement()) {
+            ResultSet countRs = countStmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
+            if (countRs.next()) {
+                destinationCountAfter = countRs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching destination count after insert for table: " + tableName, e);
+        }
+        
+        if (sourceCount == destinationCountAfter) {
+            status = "PASS";
+        }
+        
+        logToFile(tableName, sourceCount, destinationCountBefore, startTime, endTime, destinationCountAfter, status);
+    }
+}
