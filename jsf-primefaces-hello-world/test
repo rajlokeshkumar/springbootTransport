@@ -49,95 +49,44 @@ public class Db2ToPostgres {
         tableExecutor.shutdown();
     }
     
-    private static void setupConnectionPools() {
-        HikariConfig db2Config = new HikariConfig();
-        db2Config.setJdbcUrl(DB2_URL);
-        db2Config.setUsername(DB2_USER);
-        db2Config.setPassword(DB2_PASSWORD);
-        db2Config.setMaximumPoolSize(THREAD_COUNT);
-        db2DataSource = new HikariDataSource(db2Config);
-
-        HikariConfig pgConfig = new HikariConfig();
-        pgConfig.setJdbcUrl(POSTGRES_URL);
-        pgConfig.setUsername(POSTGRES_USER);
-        pgConfig.setPassword(POSTGRES_PASSWORD);
-        pgConfig.setMaximumPoolSize(THREAD_COUNT);
-        pgDataSource = new HikariDataSource(pgConfig);
-    }
-    
-    private static void logToFile(String tableName, int sourceCount, int destinationCountBefore, LocalDateTime startTime, LocalDateTime endTime, int destinationCountAfter, String status) {
-        try (FileWriter writer = new FileWriter(LOG_FILE, true)) {
-            writer.write(tableName + "," + sourceCount + "," + destinationCountBefore + "," + startTime + "," + endTime + "," + destinationCountAfter + "," + status + "\n");
-        } catch (IOException e) {
-            logger.error("Error writing to log file", e);
-        }
-    }
-    
-    private static void transferData(String tableName) {
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        LocalDateTime startTime = LocalDateTime.now();
-        int sourceCount = 0;
-        int destinationCountBefore = 0;
-        int destinationCountAfter = 0;
-        String status = "MISMATCH";
-        
-        try (Connection pgConn = pgDataSource.getConnection();
-             Statement countStmt = pgConn.createStatement()) {
-            ResultSet countRs = countStmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
-            if (countRs.next()) {
-                destinationCountBefore = countRs.getInt(1);
-            }
-        } catch (SQLException e) {
-            logger.error("Error fetching destination count before deletion for table: " + tableName, e);
-        }
-        
-        try (Connection pgConn = pgDataSource.getConnection();
-             Statement deleteStmt = pgConn.createStatement()) {
-            deleteStmt.executeUpdate("DELETE FROM " + SCHEMA_NAME + "." + tableName);
-            pgConn.commit();
-            logger.info("Existing data deleted from table: " + tableName);
-        } catch (SQLException e) {
-            logger.error("Error deleting data from table: " + tableName, e);
-            throw new RuntimeException("Failed to delete data from " + tableName, e);
-        }
+    private static void fetchAndInsertData(String tableName, int offset) {
+        String selectQuery = "SELECT * FROM " + SCHEMA_NAME + "." + tableName + " ORDER BY id LIMIT " + PAGE_SIZE + " OFFSET " + offset;
         
         try (Connection db2Conn = db2DataSource.getConnection();
-             Statement stmt = db2Conn.createStatement()) {
-            ResultSet countRs = stmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
-            if (countRs.next()) {
-                sourceCount = countRs.getInt(1);
-            }
+             Statement stmt = db2Conn.createStatement();
+             ResultSet rs = stmt.executeQuery(selectQuery)) {
             
-            for (int offset = 0; offset < sourceCount; offset += PAGE_SIZE) {
-                final int currentOffset = offset;
-                executor.execute(() -> fetchAndInsertData(tableName, currentOffset));
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            StringBuilder insertQuery = new StringBuilder("INSERT INTO " + SCHEMA_NAME + "." + tableName + " (");
+            for (int i = 1; i <= columnCount; i++) {
+                insertQuery.append(metaData.getColumnName(i));
+                if (i < columnCount) insertQuery.append(", ");
+            }
+            insertQuery.append(") VALUES (");
+            insertQuery.append("?, ".repeat(columnCount - 1)).append("?)");
+            
+            try (Connection pgConn = pgDataSource.getConnection();
+                 PreparedStatement pstmt = pgConn.prepareStatement(insertQuery.toString())) {
+                
+                int batchCount = 0;
+                while (rs.next()) {
+                    for (int i = 1; i <= columnCount; i++) {
+                        pstmt.setObject(i, rs.getObject(i));
+                    }
+                    pstmt.addBatch();
+                    batchCount++;
+                    
+                    if (batchCount % 1000 == 0) {
+                        pstmt.executeBatch();
+                        pgConn.commit();
+                    }
+                }
+                pstmt.executeBatch();
+                pgConn.commit();
             }
         } catch (SQLException e) {
-            logger.error("Error fetching total count for table: " + tableName, e);
-            throw new RuntimeException("Failed to fetch data count from " + tableName, e);
+            logger.error("Error transferring data for table: " + tableName + " at offset: " + offset, e);
         }
-        
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-            // Wait for all tasks to finish
-        }
-        
-        LocalDateTime endTime = LocalDateTime.now();
-        
-        try (Connection pgConn = pgDataSource.getConnection();
-             Statement countStmt = pgConn.createStatement()) {
-            ResultSet countRs = countStmt.executeQuery("SELECT COUNT(*) FROM " + SCHEMA_NAME + "." + tableName);
-            if (countRs.next()) {
-                destinationCountAfter = countRs.getInt(1);
-            }
-        } catch (SQLException e) {
-            logger.error("Error fetching destination count after insert for table: " + tableName, e);
-        }
-        
-        if (sourceCount == destinationCountAfter) {
-            status = "PASS";
-        }
-        
-        logToFile(tableName, sourceCount, destinationCountBefore, startTime, endTime, destinationCountAfter, status);
     }
 }
