@@ -1,54 +1,4 @@
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class Db2ToPostgres {
-    private static final Logger logger = LoggerFactory.getLogger(Db2ToPostgres.class);
-    private static final String LOG_FILE = "data_transfer_log.csv";
-    
-    private static final String DB2_URL = "jdbc:db2://your_db2_host:50000/YOUR_DB";
-    private static final String DB2_USER = "your_db2_user";
-    private static final String DB2_PASSWORD = "your_db2_password";
-    
-    private static final String POSTGRES_URL = "jdbc:postgresql://your_pg_host:5432/YOUR_DB";
-    private static final String POSTGRES_USER = "your_pg_user";
-    private static final String POSTGRES_PASSWORD = "your_pg_password";
-    
-    private static final String SCHEMA_NAME = "your_schema"; // Global schema name
-    private static final int PAGE_SIZE = 100000;
-    private static final int THREAD_COUNT = 10;
-    private static final List<String> TABLE_NAMES = Arrays.asList("table1", "table2", "table3", "table4", "table5");
-    
-    private static HikariDataSource db2DataSource;
-    private static HikariDataSource pgDataSource;
-    
-    public static void main(String[] args) {
-        setupConnectionPools();
-        ExecutorService tableExecutor = Executors.newFixedThreadPool(TABLE_NAMES.size());
-        
-        for (String tableName : TABLE_NAMES) {
-            tableExecutor.execute(() -> {
-                try {
-                    transferData(tableName);
-                } catch (Exception e) {
-                    logger.error("Error processing table: " + tableName, e);
-                    logToFile(tableName, 0, 0, LocalDateTime.now(), LocalDateTime.now(), 0, "ERROR");
-                }
-            });
-        }
-        
-        tableExecutor.shutdown();
-    }
-    
     private static void fetchAndInsertData(String tableName, int offset) {
         String selectQuery = "SELECT * FROM " + SCHEMA_NAME + "." + tableName + " ORDER BY id LIMIT " + PAGE_SIZE + " OFFSET " + offset;
         
@@ -59,34 +9,33 @@ public class Db2ToPostgres {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             StringBuilder insertQuery = new StringBuilder("INSERT INTO " + SCHEMA_NAME + "." + tableName + " (");
+            
             for (int i = 1; i <= columnCount; i++) {
                 insertQuery.append(metaData.getColumnName(i));
                 if (i < columnCount) insertQuery.append(", ");
             }
             insertQuery.append(") VALUES (");
-            insertQuery.append("?, ".repeat(columnCount - 1)).append("?)");
+            for (int i = 1; i <= columnCount; i++) {
+                insertQuery.append("?");
+                if (i < columnCount) insertQuery.append(", ");
+            }
+            insertQuery.append(")");
             
             try (Connection pgConn = pgDataSource.getConnection();
                  PreparedStatement pstmt = pgConn.prepareStatement(insertQuery.toString())) {
                 
-                int batchCount = 0;
                 while (rs.next()) {
                     for (int i = 1; i <= columnCount; i++) {
                         pstmt.setObject(i, rs.getObject(i));
                     }
                     pstmt.addBatch();
-                    batchCount++;
-                    
-                    if (batchCount % 1000 == 0) {
-                        pstmt.executeBatch();
-                        pgConn.commit();
-                    }
                 }
                 pstmt.executeBatch();
                 pgConn.commit();
+                logger.info("Batch data inserted for table: " + tableName + " at offset: " + offset);
             }
         } catch (SQLException e) {
             logger.error("Error transferring data for table: " + tableName + " at offset: " + offset, e);
         }
     }
-}
+    
