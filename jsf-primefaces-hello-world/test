@@ -65,6 +65,14 @@ public class Db2ToPostgres {
         pgDataSource = new HikariDataSource(pgConfig);
     }
     
+    private static void logToFile(String tableName, int sourceCount, int destinationCountBefore, LocalDateTime startTime, LocalDateTime endTime, int destinationCountAfter, String status) {
+        try (FileWriter writer = new FileWriter(LOG_FILE, true)) {
+            writer.write(tableName + "," + sourceCount + "," + destinationCountBefore + "," + startTime + "," + endTime + "," + destinationCountAfter + "," + status + "\n");
+        } catch (IOException e) {
+            logger.error("Error writing to log file", e);
+        }
+    }
+    
     private static void transferData(String tableName) {
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         LocalDateTime startTime = LocalDateTime.now();
