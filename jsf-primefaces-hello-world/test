@@ -79,5 +79,7 @@ else
     exit 1
 fi
 
+find "$BACKUP_DIR" -type f \( -name "*.tar" -o -name "*.tar.gz" -o -name "*.tar.zst" \) -mtime +10 -exec rm -v {} \; >> "$LOG_FILE" 2>&1
+
 
 
