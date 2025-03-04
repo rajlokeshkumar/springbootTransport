@@ -1,41 +1,83 @@
+#!/bin/bash
 
-    private static void fetchAndInsertData(String tableName, int offset) {
-        String selectQuery = "SELECT * FROM " + SCHEMA_NAME + "." + tableName + " ORDER BY id LIMIT " + PAGE_SIZE + " OFFSET " + offset;
-        
-        try (Connection db2Conn = db2DataSource.getConnection();
-             Statement stmt = db2Conn.createStatement();
-             ResultSet rs = stmt.executeQuery(selectQuery)) {
-            
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            StringBuilder insertQuery = new StringBuilder("INSERT INTO " + SCHEMA_NAME + "." + tableName + " (");
-            
-            for (int i = 1; i <= columnCount; i++) {
-                insertQuery.append(metaData.getColumnName(i));
-                if (i < columnCount) insertQuery.append(", ");
-            }
-            insertQuery.append(") VALUES (");
-            for (int i = 1; i <= columnCount; i++) {
-                insertQuery.append("?");
-                if (i < columnCount) insertQuery.append(", ");
-            }
-            insertQuery.append(")");
-            
-            try (Connection pgConn = pgDataSource.getConnection();
-                 PreparedStatement pstmt = pgConn.prepareStatement(insertQuery.toString())) {
-                
-                while (rs.next()) {
-                    for (int i = 1; i <= columnCount; i++) {
-                        pstmt.setObject(i, rs.getObject(i));
-                    }
-                    pstmt.addBatch();
-                }
-                pstmt.executeBatch();
-                pgConn.commit();
-                logger.info("Batch data inserted for table: " + tableName + " at offset: " + offset);
-            }
-        } catch (SQLException e) {
-            logger.error("Error transferring data for table: " + tableName + " at offset: " + offset, e);
-        }
-    }
-    
+# Check if arguments are provided
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <schema_name> <backup_filename> <compression_type (gzip|zstd)>"
+    exit 1
+fi
+
+# PostgreSQL Credentials
+DB_NAME="your_database"
+DB_USER="your_username"
+
+# Arguments from command line
+SCHEMA_NAME=$1
+BACKUP_FILENAME=$2
+COMPRESSION_TYPE=$3
+
+# Backup directory
+BACKUP_DIR="/path/to/backup"
+BACKUP_FILE="$BACKUP_DIR/${BACKUP_FILENAME}_$(date +%Y%m%d_%H%M%S).tar"
+
+# Run pg_dump for specific schema
+pg_dump -U $DB_USER -d $DB_NAME -F t --schema=$SCHEMA_NAME -f $BACKUP_FILE
+
+# Check if backup was successful before compression
+if [ $? -eq 0 ]; then
+    if [ "$COMPRESSION_TYPE" == "gzip" ]; then
+        gzip -9 "$BACKUP_FILE"
+        BACKUP_FILE="$BACKUP_FILE.gz"
+    elif [ "$COMPRESSION_TYPE" == "zstd" ]; then
+        zstd -19 "$BACKUP_FILE"
+        BACKUP_FILE="$BACKUP_FILE.zst"
+    else
+        echo "Invalid compression type. Use 'gzip' or 'zstd'."
+        exit 1
+    fi
+    echo "Backup for schema '$SCHEMA_NAME' completed: $BACKUP_FILE"
+else
+    echo "Backup failed!"
+    exit 1
+fi
+
+
+
+!/bin/bash
+
+# Check if arguments are provided
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <schema_name> <backup_file_path>"
+    exit 1
+fi
+
+# PostgreSQL Credentials
+DB_NAME="your_database"
+DB_USER="your_username"
+
+# Arguments from command line
+SCHEMA_NAME=$1
+BACKUP_FILE=$2
+DECOMPRESSED_FILE=$BACKUP_FILE
+
+# Check file type and decompress if needed
+if [[ $BACKUP_FILE == *.gz ]]; then
+    gunzip -c "$BACKUP_FILE" > "${BACKUP_FILE%.gz}"
+    DECOMPRESSED_FILE="${BACKUP_FILE%.gz}"
+elif [[ $BACKUP_FILE == *.zst ]]; then
+    zstd -d "$BACKUP_FILE" -o "${BACKUP_FILE%.zst}"
+    DECOMPRESSED_FILE="${BACKUP_FILE%.zst}"
+fi
+
+# Restore schema from decompressed backup
+pg_restore -U $DB_USER -d $DB_NAME -F t --schema=$SCHEMA_NAME "$DECOMPRESSED_FILE"
+
+# Check if restore was successful
+if [ $? -eq 0 ]; then
+    echo "Schema '$SCHEMA_NAME' restored successfully!"
+else
+    echo "Schema restore failed!"
+    exit 1
+fi
+
+
+
