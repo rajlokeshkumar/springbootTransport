@@ -2,7 +2,7 @@
 
 # Check if arguments are provided
 if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <schema_name> <backup_filename> <compression_type (gzip|zstd)>"
+    echo "Usage: $0 <source_schema> <target_schema> <backup_file_path>"
     exit 1
 fi
 
@@ -11,75 +11,38 @@ DB_NAME="your_database"
 DB_USER="your_username"
 
 # Arguments from command line
-SCHEMA_NAME=$1
-BACKUP_FILENAME=$2
-COMPRESSION_TYPE=$3
+SOURCE_SCHEMA=$1
+TARGET_SCHEMA=$2
+BACKUP_FILE=$3
+LOG_FILE="/path/to/backup/restore.log"
 
-# Backup directory
-BACKUP_DIR="/path/to/backup"
-BACKUP_FILE="$BACKUP_DIR/${BACKUP_FILENAME}_$(date +%Y%m%d_%H%M%S).tar"
+# Start logging
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting restore from schema '$SOURCE_SCHEMA' to '$TARGET_SCHEMA'" >> "$LOG_FILE"
 
-# Run pg_dump for specific schema
-pg_dump -U $DB_USER -d $DB_NAME -F t --schema=$SCHEMA_NAME -f $BACKUP_FILE
+# Ensure target schema exists
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating target schema '$TARGET_SCHEMA' if it does not exist..." >> "$LOG_FILE"
+psql -U $DB_USER -d $DB_NAME -c "CREATE SCHEMA IF NOT EXISTS $TARGET_SCHEMA;" >> "$LOG_FILE" 2>&1
 
-# Check if backup was successful before compression
-if [ $? -eq 0 ]; then
-    if [ "$COMPRESSION_TYPE" == "gzip" ]; then
-        gzip -9 "$BACKUP_FILE"
-        BACKUP_FILE="$BACKUP_FILE.gz"
-    elif [ "$COMPRESSION_TYPE" == "zstd" ]; then
-        zstd -19 "$BACKUP_FILE"
-        BACKUP_FILE="$BACKUP_FILE.zst"
-    else
-        echo "Invalid compression type. Use 'gzip' or 'zstd'."
-        exit 1
-    fi
-    echo "Backup for schema '$SCHEMA_NAME' completed: $BACKUP_FILE"
-else
-    echo "Backup failed!"
-    exit 1
-fi
+# Extract schema-only dump to modify schema name
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Extracting schema from backup..." >> "$LOG_FILE"
+pg_restore -U $DB_USER -d $DB_NAME -F t --schema-only "$BACKUP_FILE" > /tmp/schema_dump.sql
 
+# Replace source schema with target schema
+sed -i "s/SCHEMA $SOURCE_SCHEMA/SCHEMA $TARGET_SCHEMA/g" /tmp/schema_dump.sql
+sed -i "s/$SOURCE_SCHEMA\./$TARGET_SCHEMA./g" /tmp/schema_dump.sql
 
+# Apply modified schema dump
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Applying modified schema to target schema '$TARGET_SCHEMA'..." >> "$LOG_FILE"
+psql -U $DB_USER -d $DB_NAME -f /tmp/schema_dump.sql >> "$LOG_FILE" 2>&1
 
-!/bin/bash
-
-# Check if arguments are provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <schema_name> <backup_file_path>"
-    exit 1
-fi
-
-# PostgreSQL Credentials
-DB_NAME="your_database"
-DB_USER="your_username"
-
-# Arguments from command line
-SCHEMA_NAME=$1
-BACKUP_FILE=$2
-DECOMPRESSED_FILE=$BACKUP_FILE
-
-# Check file type and decompress if needed
-if [[ $BACKUP_FILE == *.gz ]]; then
-    gunzip -c "$BACKUP_FILE" > "${BACKUP_FILE%.gz}"
-    DECOMPRESSED_FILE="${BACKUP_FILE%.gz}"
-elif [[ $BACKUP_FILE == *.zst ]]; then
-    zstd -d "$BACKUP_FILE" -o "${BACKUP_FILE%.zst}"
-    DECOMPRESSED_FILE="${BACKUP_FILE%.zst}"
-fi
-
-# Restore schema from decompressed backup
-pg_restore -U $DB_USER -d $DB_NAME -F t --schema=$SCHEMA_NAME "$DECOMPRESSED_FILE"
+# Restore only data into the target schema
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restoring data into target schema '$TARGET_SCHEMA'..." >> "$LOG_FILE"
+pg_restore -U $DB_USER -d $DB_NAME -F t --data-only --schema=$SOURCE_SCHEMA "$BACKUP_FILE" | sed "s/$SOURCE_SCHEMA\./$TARGET_SCHEMA./g" | psql -U $DB_USER -d $DB_NAME >> "$LOG_FILE" 2>&1
 
 # Check if restore was successful
 if [ $? -eq 0 ]; then
-    echo "Schema '$SCHEMA_NAME' restored successfully!"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restore completed successfully from '$SOURCE_SCHEMA' to '$TARGET_SCHEMA'!" >> "$LOG_FILE"
 else
-    echo "Schema restore failed!"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restore FAILED!" >> "$LOG_FILE"
     exit 1
 fi
-
-find "$BACKUP_DIR" -type f \( -name "*.tar" -o -name "*.tar.gz" -o -name "*.tar.zst" \) -mtime +10 -exec rm -v {} \; >> "$LOG_FILE" 2>&1
-
-
-
