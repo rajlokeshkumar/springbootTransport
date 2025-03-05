@@ -46,3 +46,54 @@ else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restore FAILED!" >> "$LOG_FILE"
     exit 1
 fi
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+# Database credentials
+DB_NAME="your_database"
+DB_USER="your_user"
+DUMP_FILE="/path/to/your_dump_file.dump"
+
+# Step 1: Truncate all tables before restore
+echo "Truncating all tables..."
+psql -U $DB_USER -d $DB_NAME -c "
+DO \$\$ 
+DECLARE 
+    r RECORD; 
+BEGIN 
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') 
+    LOOP 
+        EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE'; 
+    END LOOP; 
+END \$\$;
+"
+echo "All tables truncated."
+
+# Step 2: Restore the database dump
+echo "Restoring the database..."
+pg_restore --verbose --clean --no-owner --dbname=$DB_NAME --username=$DB_USER $DUMP_FILE
+
+echo "Database restore completed!"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
