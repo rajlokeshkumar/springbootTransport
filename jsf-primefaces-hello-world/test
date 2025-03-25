@@ -1,99 +1,82 @@
-#!/bin/bash
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-# Check if arguments are provided
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <source_schema> <target_schema> <backup_file_path>"
-    exit 1
-fi
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.*;
 
-# PostgreSQL Credentials
-DB_NAME="your_database"
-DB_USER="your_username"
+public class JsonFileCreator {
 
-# Arguments from command line
-SOURCE_SCHEMA=$1
-TARGET_SCHEMA=$2
-BACKUP_FILE=$3
-LOG_FILE="/path/to/backup/restore.log"
+    public static void main(String[] args) {
+        try {
+            // Locate the path to current working directory (usually where the app is run from)
+            Path currentPath = Paths.get("").toAbsolutePath();
+            System.out.println("Current Path: " + currentPath);
 
-# Start logging
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting restore from schema '$SOURCE_SCHEMA' to '$TARGET_SCHEMA'" >> "$LOG_FILE"
+            // Locate target directory
+            Path targetDir = currentPath.resolve("target");
 
-# Ensure target schema exists
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating target schema '$TARGET_SCHEMA' if it does not exist..." >> "$LOG_FILE"
-psql -U $DB_USER -d $DB_NAME -c "CREATE SCHEMA IF NOT EXISTS $TARGET_SCHEMA;" >> "$LOG_FILE" 2>&1
+            // Folder name for jsonfile (outside target)
+            Path jsonFolderPath = currentPath.resolve("jsonfile");
 
-# Extract schema-only dump to modify schema name
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Extracting schema from backup..." >> "$LOG_FILE"
-pg_restore -U $DB_USER -d $DB_NAME -F t --schema-only "$BACKUP_FILE" > /tmp/schema_dump.sql
+            // If running from target folder (e.g., via jar), go one level up
+            if (currentPath.endsWith("target")) {
+                jsonFolderPath = currentPath.getParent().resolve("jsonfile");
+            }
 
-# Replace source schema with target schema
-sed -i "s/SCHEMA $SOURCE_SCHEMA/SCHEMA $TARGET_SCHEMA/g" /tmp/schema_dump.sql
-sed -i "s/$SOURCE_SCHEMA\./$TARGET_SCHEMA./g" /tmp/schema_dump.sql
+            // Delete if exists
+            if (Files.exists(jsonFolderPath)) {
+                deleteDirectory(jsonFolderPath.toFile());
+                System.out.println("Deleted existing folder: " + jsonFolderPath);
+            }
 
-# Apply modified schema dump
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Applying modified schema to target schema '$TARGET_SCHEMA'..." >> "$LOG_FILE"
-psql -U $DB_USER -d $DB_NAME -f /tmp/schema_dump.sql >> "$LOG_FILE" 2>&1
+            // Create new folder
+            Files.createDirectories(jsonFolderPath);
+            System.out.println("Created folder: " + jsonFolderPath);
 
-# Restore only data into the target schema
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restoring data into target schema '$TARGET_SCHEMA'..." >> "$LOG_FILE"
-pg_restore -U $DB_USER -d $DB_NAME -F t --data-only --schema=$SOURCE_SCHEMA "$BACKUP_FILE" | sed "s/$SOURCE_SCHEMA\./$TARGET_SCHEMA./g" | psql -U $DB_USER -d $DB_NAME >> "$LOG_FILE" 2>&1
+            // Sample data to write
+            Person person = new Person("John", "Doe", 30);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonString = gson.toJson(person);
 
-# Check if restore was successful
-if [ $? -eq 0 ]; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restore completed successfully from '$SOURCE_SCHEMA' to '$TARGET_SCHEMA'!" >> "$LOG_FILE"
-else
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restore FAILED!" >> "$LOG_FILE"
-    exit 1
-fi
+            // Write JSON file
+            File jsonFile = jsonFolderPath.resolve("person.json").toFile();
+            try (FileWriter writer = new FileWriter(jsonFile)) {
+                writer.write(jsonString);
+                System.out.println("JSON file created at: " + jsonFile.getAbsolutePath());
+            }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    // Utility to delete a directory recursively
+    private static void deleteDirectory(File directory) throws IOException {
+        if (directory.isDirectory()) {
+            File[] entries = directory.listFiles();
+            if (entries != null) {
+                for (File file : entries) {
+                    deleteDirectory(file);
+                }
+            }
+        }
+        if (!directory.delete()) {
+            throw new IOException("Failed to delete: " + directory);
+        }
+    }
 
+    // Sample data class
+    static class Person {
+        String firstName;
+        String lastName;
+        int age;
 
-
-
-
-
-
-
-#!/bin/bash
-
-# Database credentials
-DB_NAME="your_database"
-DB_USER="your_user"
-DUMP_FILE="/path/to/your_dump_file.dump"
-
-# Step 1: Truncate all tables before restore
-echo "Truncating all tables..."
-psql -U $DB_USER -d $DB_NAME -c "
-DO \$\$ 
-DECLARE 
-    r RECORD; 
-BEGIN 
-    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') 
-    LOOP 
-        EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE'; 
-    END LOOP; 
-END \$\$;
-"
-echo "All tables truncated."
-
-# Step 2: Restore the database dump
-echo "Restoring the database..."
-pg_restore --verbose --clean --no-owner --dbname=$DB_NAME --username=$DB_USER $DUMP_FILE
-
-echo "Database restore completed!"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        public Person(String firstName, String lastName, int age) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.age = age;
+        }
+    }
+}
