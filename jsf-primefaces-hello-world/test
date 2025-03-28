@@ -1,4 +1,51 @@
-      Set<String> methodNames = new HashSet<>();
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1) {
+            System.out.println("Usage: java MethodDuplicateFinder <FullyQualifiedSourceClassName>");
+            return;
+        }
+
+        String sourceClassName = args[0];
+
+        Set<String> sourceMethods = extractMethodNamesFromClass(sourceClassName);
+        Map<String, List<String>> duplicatesMap = new HashMap<>();
+        Set<String> allDuplicates = new HashSet<>();
+
+        for (String targetClassName : TARGET_CLASSES) {
+            try {
+                Set<String> targetMethods = extractMethodNamesFromClass(targetClassName);
+
+                for (String method : sourceMethods) {
+                    if (targetMethods.contains(method)) {
+                        allDuplicates.add(method);
+                        duplicatesMap.computeIfAbsent(method, k -> new ArrayList<>())
+                                     .add(targetClassName);
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                System.out.println("⚠️ Skipping: " + targetClassName + " (class not found)");
+            }
+        }
+
+        System.out.println("\n🧾 Duplicate Method Report for " + sourceClassName + ":");
+        if (duplicatesMap.isEmpty()) {
+            System.out.println("✅ No duplicate method names found in target classes.");
+        } else {
+            for (Map.Entry<String, List<String>> entry : duplicatesMap.entrySet()) {
+                System.out.println("🔁 " + entry.getKey() + " → Also found in: " + entry.getValue());
+            }
+        }
+
+        System.out.println("\n➕ New Methods to be Coded:");
+        for (String method : sourceMethods) {
+            if (!allDuplicates.contains(method)) {
+                System.out.println("🆕 " + method);
+            }
+        }
+    }
+
+    private static Set<String> extractMethodNamesFromClass(String className) throws ClassNotFoundException {
+        Set<String> methodNames = new HashSet<>();
         Class<?> clazz = Class.forName(className);
 
         Method[] methods = clazz.getDeclaredMethods();
@@ -8,3 +55,4 @@
             }
         }
         return methodNames;
+    }
