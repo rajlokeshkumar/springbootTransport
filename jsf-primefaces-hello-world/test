@@ -1,82 +1,99 @@
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.*;
+public class MethodDuplicateFinder {
 
-public class JsonFileCreator {
+    // 🔧 Hardcoded list of target classes to compare against
+    private static final List<String> TARGET_CLASSES = Arrays.asList(
+        "B.java",
+        "C.java",
+        "CommonUtils.java"
+    );
 
-    public static void main(String[] args) {
-        try {
-            // Locate the path to current working directory (usually where the app is run from)
-            Path currentPath = Paths.get("").toAbsolutePath();
-            System.out.println("Current Path: " + currentPath);
+    // 🔧 List of method names to ignore
+    private static final Set<String> IGNORE_METHODS = Set.of("init", "setup");
 
-            // Locate target directory
-            Path targetDir = currentPath.resolve("target");
-
-            // Folder name for jsonfile (outside target)
-            Path jsonFolderPath = currentPath.resolve("jsonfile");
-
-            // If running from target folder (e.g., via jar), go one level up
-            if (currentPath.endsWith("target")) {
-                jsonFolderPath = currentPath.getParent().resolve("jsonfile");
-            }
-
-            // Delete if exists
-            if (Files.exists(jsonFolderPath)) {
-                deleteDirectory(jsonFolderPath.toFile());
-                System.out.println("Deleted existing folder: " + jsonFolderPath);
-            }
-
-            // Create new folder
-            Files.createDirectories(jsonFolderPath);
-            System.out.println("Created folder: " + jsonFolderPath);
-
-            // Sample data to write
-            Person person = new Person("John", "Doe", 30);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String jsonString = gson.toJson(person);
-
-            // Write JSON file
-            File jsonFile = jsonFolderPath.resolve("person.json").toFile();
-            try (FileWriter writer = new FileWriter(jsonFile)) {
-                writer.write(jsonString);
-                System.out.println("JSON file created at: " + jsonFile.getAbsolutePath());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: java MethodDuplicateFinder <SourceClass.java> <DirectoryPath>");
+            return;
         }
-    }
 
-    // Utility to delete a directory recursively
-    private static void deleteDirectory(File directory) throws IOException {
-        if (directory.isDirectory()) {
-            File[] entries = directory.listFiles();
-            if (entries != null) {
-                for (File file : entries) {
-                    deleteDirectory(file);
+        String sourceClassFile = args[0];
+        String directoryPath = args[1];
+
+        File dir = new File(directoryPath);
+        if (!dir.isDirectory()) {
+            System.out.println("Invalid directory: " + directoryPath);
+            return;
+        }
+
+        File sourceFile = new File(dir, sourceClassFile);
+        if (!sourceFile.exists()) {
+            System.out.println("Source class file not found: " + sourceClassFile);
+            return;
+        }
+
+        String sourceClassName = sourceClassFile.replace(".java", "");
+        Set<String> sourceMethods = extractMethodNames(sourceFile, sourceClassName);
+        Map<String, List<String>> duplicatesMap = new HashMap<>();
+        Set<String> allDuplicates = new HashSet<>();
+
+        for (String targetClassName : TARGET_CLASSES) {
+            File file = new File(dir, targetClassName);
+            if (!file.exists()) {
+                System.out.println("⚠️ Skipping: " + targetClassName + " (not found)");
+                continue;
+            }
+
+            String targetSimpleName = targetClassName.replace(".java", "");
+            Set<String> targetMethods = extractMethodNames(file, targetSimpleName);
+
+            for (String method : sourceMethods) {
+                if (targetMethods.contains(method)) {
+                    allDuplicates.add(method);
+                    duplicatesMap.computeIfAbsent(method, k -> new ArrayList<>())
+                                 .add(targetSimpleName);
                 }
             }
         }
-        if (!directory.delete()) {
-            throw new IOException("Failed to delete: " + directory);
+
+        // 🔁 Print duplicates
+        System.out.println("\n🧾 Duplicate Method Report for " + sourceClassFile + ":");
+        if (duplicatesMap.isEmpty()) {
+            System.out.println("✅ No duplicate method names found in target classes.");
+        } else {
+            for (Map.Entry<String, List<String>> entry : duplicatesMap.entrySet()) {
+                System.out.println("🔁 " + entry.getKey() + " → Also found in: " + entry.getValue());
+            }
+        }
+
+        // ➕ Print new (non-duplicate) methods
+        System.out.println("\n➕ New Methods to be Coded:");
+        for (String method : sourceMethods) {
+            if (!allDuplicates.contains(method)) {
+                System.out.println("🆕 " + method);
+            }
         }
     }
 
-    // Sample data class
-    static class Person {
-        String firstName;
-        String lastName;
-        int age;
+    private static Set<String> extractMethodNames(File file, String className) throws IOException {
+        Set<String> methodNames = new HashSet<>();
+        Pattern pattern = Pattern.compile("\\b(?:public|protected|private)?\\s*(?:static\\s*)?\\S+\\s+(\\w+)\\s*\\([^)]*\\)\\s*\\{?");
 
-        public Person(String firstName, String lastName, int age) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.age = age;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = pattern.matcher(line.trim());
+                if (matcher.find()) {
+                    String methodName = matcher.group(1);
+                    if (!methodName.equals(className) && !IGNORE_METHODS.contains(methodName)) {
+                        methodNames.add(methodName);
+                    }
+                }
+            }
         }
+        return methodNames;
     }
 }
