@@ -1,95 +1,17 @@
-ublic static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            System.out.println("Usage: java MethodDuplicateFinder <SourceClass.java>");
-            return;
-        }
-
-        String srcRoot = "src"; // Default to src directory
-        String sourceClassFile = args[0];
-
-        String sourceClassName = findFullyQualifiedClassName(new File(srcRoot), sourceClassFile);
-        if (sourceClassName == null) {
-            System.out.println("❌ Could not resolve fully qualified class name for " + sourceClassFile);
-            return;
-        }
-
-        List<String> targetClassNames = new ArrayList<>();
-        for (String targetFile : TARGET_CLASS_FILES) {
-            String targetClassName = findFullyQualifiedClassName(new File(srcRoot), targetFile);
-            if (targetClassName != null) {
-                targetClassNames.add(targetClassName);
-            } else {
-                System.out.println("⚠️ Could not resolve fully qualified class name for target file: " + targetFile);
-            }
-        }
-
-        // Build classpath dynamically from src directory
-        File srcDir = new File(srcRoot);
-        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{srcDir.toURI().toURL()});
-        Thread.currentThread().setContextClassLoader(classLoader);
-
-        Set<String> sourceMethods = extractMethodNamesFromClass(sourceClassName);
-        Map<String, List<String>> duplicatesMap = new HashMap<>();
-        Set<String> allDuplicates = new HashSet<>();
-
-        for (String targetClassName : targetClassNames) {
-            try {
-                Set<String> targetMethods = extractMethodNamesFromClass(targetClassName);
-
-                for (String method : sourceMethods) {
-                    if (targetMethods.contains(method)) {
-                        allDuplicates.add(method);
-                        duplicatesMap.computeIfAbsent(method, k -> new ArrayList<>())
-                                     .add(targetClassName);
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                System.out.println("⚠️ Skipping: " + targetClassName + " (class not found)");
-            }
-        }
-
-        System.out.println("\n🧾 Duplicate Method Report for " + sourceClassName + ":");
-        if (duplicatesMap.isEmpty()) {
-            System.out.println("✅ No duplicate method names found in target classes.");
-        } else {
-            for (Map.Entry<String, List<String>> entry : duplicatesMap.entrySet()) {
-                System.out.println("🔁 " + entry.getKey() + " → Also found in: " + entry.getValue());
-            }
-        }
-
-        System.out.println("\n➕ New Methods to be Coded:");
-        for (String method : sourceMethods) {
-            if (!allDuplicates.contains(method)) {
-                System.out.println("🆕 " + method);
-            }
-        }
-    }
-
-    private static String findFullyQualifiedClassName(File directory, String targetFileName) {
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
-            if (file.isDirectory()) {
-                String result = findFullyQualifiedClassName(file, targetFileName);
-                if (result != null) return result;
-            } else if (file.getName().equals(targetFileName)) {
-                String absolutePath = file.getAbsolutePath().replace("\\", "/");
-                int srcIndex = absolutePath.indexOf("/src/");
-                if (srcIndex >= 0) {
-                    String relativePath = absolutePath.substring(srcIndex + 5).replace(".java", "").replace("/", ".");
-                    return relativePath;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static Set<String> extractMethodNamesFromClass(String className) throws ClassNotFoundException {
+   private static Set<String> extractMethodNamesFromClass(String className) throws ClassNotFoundException {
         Set<String> methodNames = new HashSet<>();
         Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
 
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            if (!IGNORE_METHODS.contains(method.getName()) && !method.isAnnotationPresent(STRUCTURE.class)) {
-                methodNames.add(method.getName());
+            String baseName = method.getName();
+            // If lambda or synthetic, extract base method name
+            if (baseName.startsWith("lambda$") && baseName.contains("$")) {
+                String[] parts = baseName.split("\\$");
+                if (parts.length > 1) baseName = parts[1];
+            }
+            if (!IGNORE_METHODS.contains(baseName) && !method.isAnnotationPresent(STRUCTURE.class)) {
+                methodNames.add(baseName);
             }
         }
         return methodNames;
