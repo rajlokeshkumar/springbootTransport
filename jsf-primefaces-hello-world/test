@@ -4,11 +4,10 @@ import java.util.regex.*;
 
 public class MethodDuplicateFinder {
 
-    // 🔧 Hardcoded list of target classes to compare against
+    // 🔧 Hardcoded list of target class file names (in different packages)
     private static final List<String> TARGET_CLASSES = Arrays.asList(
-        "B.java",
         "C.java",
-        "CommonUtils.java"
+        "D.java"
     );
 
     // 🔧 List of method names to ignore
@@ -16,51 +15,51 @@ public class MethodDuplicateFinder {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            System.out.println("Usage: java MethodDuplicateFinder <SourceClass.java> <DirectoryPath>");
+            System.out.println("Usage: java MethodDuplicateFinder <SourceClass.java> <SrcDirectoryPath>");
             return;
         }
 
-        String sourceClassFile = args[0];
-        String directoryPath = args[1];
+        String sourceClassName = args[0];
+        String srcRoot = args[1];
 
-        File dir = new File(directoryPath);
-        if (!dir.isDirectory()) {
-            System.out.println("Invalid directory: " + directoryPath);
+        File srcDir = new File(srcRoot);
+        if (!srcDir.isDirectory()) {
+            System.out.println("Invalid source directory: " + srcRoot);
             return;
         }
 
-        File sourceFile = new File(dir, sourceClassFile);
-        if (!sourceFile.exists()) {
-            System.out.println("Source class file not found: " + sourceClassFile);
+        // Find the source file by walking src directory
+        File sourceFile = findFileRecursively(srcDir, sourceClassName);
+        if (sourceFile == null) {
+            System.out.println("❌ Source file " + sourceClassName + " not found under " + srcRoot);
             return;
         }
 
-        String sourceClassName = sourceClassFile.replace(".java", "");
-        Set<String> sourceMethods = extractMethodNames(sourceFile, sourceClassName);
+        String sourceSimpleName = sourceClassName.replace(".java", "");
+        Set<String> sourceMethods = extractMethodNames(sourceFile, sourceSimpleName);
         Map<String, List<String>> duplicatesMap = new HashMap<>();
         Set<String> allDuplicates = new HashSet<>();
 
-        for (String targetClassName : TARGET_CLASSES) {
-            File file = new File(dir, targetClassName);
-            if (!file.exists()) {
-                System.out.println("⚠️ Skipping: " + targetClassName + " (not found)");
+        for (String targetFileName : TARGET_CLASSES) {
+            File targetFile = findFileRecursively(srcDir, targetFileName);
+            if (targetFile == null) {
+                System.out.println("⚠️ Skipping: " + targetFileName + " (not found)");
                 continue;
             }
 
-            String targetSimpleName = targetClassName.replace(".java", "");
-            Set<String> targetMethods = extractMethodNames(file, targetSimpleName);
+            String targetClassName = targetFileName.replace(".java", "");
+            Set<String> targetMethods = extractMethodNames(targetFile, targetClassName);
 
             for (String method : sourceMethods) {
                 if (targetMethods.contains(method)) {
                     allDuplicates.add(method);
                     duplicatesMap.computeIfAbsent(method, k -> new ArrayList<>())
-                                 .add(targetSimpleName);
+                                 .add(targetClassName);
                 }
             }
         }
 
-        // 🔁 Print duplicates
-        System.out.println("\n🧾 Duplicate Method Report for " + sourceClassFile + ":");
+        System.out.println("\n🧾 Duplicate Method Report for " + sourceClassName + ":");
         if (duplicatesMap.isEmpty()) {
             System.out.println("✅ No duplicate method names found in target classes.");
         } else {
@@ -69,13 +68,28 @@ public class MethodDuplicateFinder {
             }
         }
 
-        // ➕ Print new (non-duplicate) methods
         System.out.println("\n➕ New Methods to be Coded:");
         for (String method : sourceMethods) {
             if (!allDuplicates.contains(method)) {
                 System.out.println("🆕 " + method);
             }
         }
+    }
+
+    // Recursively finds a .java file with given name in a directory tree
+    private static File findFileRecursively(File dir, String fileName) {
+        File[] files = dir.listFiles();
+        if (files == null) return null;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                File found = findFileRecursively(file, fileName);
+                if (found != null) return found;
+            } else if (file.getName().equals(fileName)) {
+                return file;
+            }
+        }
+        return null;
     }
 
     private static Set<String> extractMethodNames(File file, String className) throws IOException {
@@ -94,6 +108,7 @@ public class MethodDuplicateFinder {
                 }
             }
         }
+
         return methodNames;
     }
 }
