@@ -1,18 +1,140 @@
-   private static Set<String> extractMethodNamesFromClass(String className) throws ClassNotFoundException {
-        Set<String> methodNames = new HashSet<>();
-        Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.*;
+import java.util.*;
 
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            String baseName = method.getName();
-            // If lambda or synthetic, extract base method name
-            if (baseName.startsWith("lambda$") && baseName.contains("$")) {
-                String[] parts = baseName.split("\\$");
-                if (parts.length > 1) baseName = parts[1];
-            }
-            if (!IGNORE_METHODS.contains(baseName) && !method.isAnnotationPresent(STRUCTURE.class)) {
-                methodNames.add(baseName);
+public class ObjectComparator {
+    private static String cleanRootPrefix(String path) {
+        if (path.startsWith("e1.")) return path.substring(3);
+        if (path.startsWith("e2.")) return path.substring(3);
+        return path;
+    }
+    private static final List<String[]> collectionSummary = new ArrayList<>();
+
+    public static void main(String[] args) throws Exception {
+    // Read file paths from command-line args
+        if (args.length != 3) {
+            System.out.println("Usage: java ObjectComparator <jsonFile1> <jsonFile2> <outputFile>");
+            return;
+        }
+
+        String jsonPath1 = args[0];
+        String jsonPath2 = args[1];
+        String outputPath = args[2];
+
+        com.google.gson.Gson gson = new com.google.gson.Gson();
+        BuildObject e1 = gson.fromJson(new java.io.FileReader(jsonPath1), BuildObject.class);
+        BuildObject e2 = gson.fromJson(new java.io.FileReader(jsonPath2), BuildObject.class);
+
+    analyzeCollections(e1, "e1", 0);
+    analyzeCollections(e2, "e2", 0);
+
+    Map<String, Integer> sizeMapE1 = new HashMap<>();
+    Map<String, Integer> sizeMapE2 = new HashMap<>();
+
+    for (String[] row : collectionSummary) {
+        String rawKey = row[0];
+        String displayKey = row[1];
+        int size = Integer.parseInt(row[2]);
+        if (rawKey.startsWith("e1")) {
+            sizeMapE1.put(rawKey, size);
+        } else if (rawKey.startsWith("e2")) {
+            sizeMapE2.put(rawKey, size);
+        }
+    }
+
+    Set<String> matchingKeys = new TreeSet<>();
+        for (String key : sizeMapE1.keySet()) {
+            String otherKey = key.replaceFirst("e1", "e2");
+            if (sizeMapE2.containsKey(otherKey)) {
+                matchingKeys.add(key);
             }
         }
-        return methodNames;
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath))) {
+            writer.printf("%-70s %-10s %-10s %-10s%n", "Field Path", "Size(e1)", "Size(e2)", "Status");
+            writer.printf("%-70s %-10s %-10s %-10s%n", "----------", "--------", "--------", "------");
+            for (String key : matchingKeys) {
+                String otherKey = key.replaceFirst("e1", "e2");
+                int size1 = sizeMapE1.getOrDefault(key, 0);
+                int size2 = sizeMapE2.getOrDefault(otherKey, 0);
+                String displayKeyOut = cleanRootPrefix(key);
+                String indentKey = getIndentedPath(displayKeyOut, countLeadingNestingLevels(displayKeyOut));
+                String status = size1 == size2 ? "Match" : "Diff";
+                writer.printf("%-70s %-10d %-10d %-10s%n", indentKey, size1, size2, status);
+            }
+        }
     }
+
+    private static void analyzeCollections(Object obj, String path, int level) {
+        if (obj == null) return;
+
+        Class<?> clazz = obj.getClass();
+        if (isPrimitiveOrWrapperOrString(clazz)) return;
+
+        if (obj instanceof Collection<?>) {
+    Collection<?> coll = (Collection<?>) obj;
+    collectionSummary.add(new String[]{
+    path,
+    getIndentedPath(cleanRootPrefix(path), level),
+    String.valueOf(coll.size())
+});
+    int i = 0;
+    for (Object item : coll) {
+        analyzeCollections(item, path + "[" + i + "]", level + 1);
+        i++;
+    }
+    return;
+
+        }
+
+        if (obj instanceof Map<?, ?>) {
+            Map<?, ?> map = (Map<?, ?>) obj;
+            collectionSummary.add(new String[]{
+    path,
+    getIndentedPath(cleanRootPrefix(path), level),
+    String.valueOf(map.size())
+});
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                analyzeCollections(entry.getValue(), path + "." + entry.getKey(), level + 1);
+            }
+            return;
+        }
+
+        Field[] fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                .filter(f -> !f.getName().equals("serialVersionUID"))
+                .toArray(Field[]::new);
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(obj);
+                analyzeCollections(value, path + "." + field.getName(), level + 1);
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+    }
+
+    private static String getIndentedPath(String path, int level) {
+        String indent = new String(new char[level * 2]).replace('\0', ' ');
+        return indent + path;
+    }
+
+    private static int countLeadingNestingLevels(String path) {
+        return path.isEmpty() ? 0 : path.split("\.").length - 1;
+    }
+
+    private static boolean isPrimitiveOrWrapperOrString(Class<?> clazz) {
+        return clazz.isPrimitive() ||
+                clazz == String.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Double.class ||
+                clazz == Float.class ||
+                clazz == Boolean.class ||
+                clazz == Byte.class ||
+                clazz == Short.class ||
+                clazz == Character.class;
+    }
+}
