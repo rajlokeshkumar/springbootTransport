@@ -1,0 +1,17 @@
+Duplicate Monitor-  Get-CimInstance -Namespace root\wmi -ClassName WmiMonitorConnectionParams | Select InstanceName, VideoOutputTechnology
+
+Register-WmiEvent -Class Win32_DeviceChangeEvent -SourceIdentifier DeviceChangeEvent -Action {
+    Write-Host "🔔 Device change detected at $(Get-Date)"
+}
+
+Unregister-Event -SourceIdentifier DeviceChangeEvent
+
+while ($true) {
+    Get-CimInstance -Namespace root\wmi -ClassName WmiMonitorConnectionParams | 
+        Select-Object InstanceName, VideoOutputTechnology | 
+        Out-Host
+    Start-Sleep -Seconds 5
+    Clear-Host
+}
+
+
