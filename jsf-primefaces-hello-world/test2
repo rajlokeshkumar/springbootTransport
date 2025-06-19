@@ -1,0 +1,51 @@
+private static void analyzeCollections(Object obj, String path, int level) {
+    if (obj == null) return;
+
+    int identityHash = System.identityHashCode(obj);
+    if (visited.contains(identityHash)) return; // Prevent circular recursion
+    visited.add(identityHash);
+    
+    Class<?> clazz = obj.getClass();
+    if (isPrimitiveOrWrapperOrString(clazz)) return;
+
+    if (obj instanceof Collection<?>) {
+        Collection<?> coll = (Collection<?>) obj;
+        collectionSummary.add(new String[]{
+                path,
+                getIndentedPath(cleanRootPrefix(path), level),
+                String.valueOf(coll.size())
+        });
+        int i = 0;
+        for (Object item : coll) {
+            analyzeCollections(item, path + "[" + i + "]", level + 1);
+            i++;
+        }
+        return;
+    }
+
+    if (obj instanceof Map<?, ?>) {
+        Map<?, ?> map = (Map<?, ?>) obj;
+        collectionSummary.add(new String[]{
+                path,
+                getIndentedPath(cleanRootPrefix(path), level),
+                String.valueOf(map.size())
+        });
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            analyzeCollections(entry.getValue(), path + "." + entry.getKey(), level + 1);
+        }
+        return;
+    }
+
+    Field[] fields = Arrays.stream(clazz.getDeclaredFields())
+            .filter(f -> !Modifier.isStatic(f.getModifiers()))
+            .filter(f -> !f.getName().equals("serialVersionUID"))
+            .toArray(Field[]::new);
+
+    for (Field field : fields) {
+        field.setAccessible(true);
+        try {
+            Object value = field.get(obj);
+            analyzeCollections(value, path + "." + field.getName(), level + 1);
+        } catch (IllegalAccessException ignored) {
+        }
+    }
