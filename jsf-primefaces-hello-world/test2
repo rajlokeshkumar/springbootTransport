@@ -1,13 +1,15 @@
+private static final Set<Integer> visited = new HashSet<>();
+
 private static void analyzeCollections(Object obj, String path, int level) {
     if (obj == null) return;
 
-    int identityHash = System.identityHashCode(obj);
-    if (visited.contains(identityHash)) return; // Prevent circular recursion
-    visited.add(identityHash);
-    
     Class<?> clazz = obj.getClass();
     if (isPrimitiveOrWrapperOrString(clazz)) return;
 
+    int identityHash = System.identityHashCode(obj);
+    if (visited.contains(identityHash)) return;
+    visited.add(identityHash);
+    
     if (obj instanceof Collection<?>) {
         Collection<?> coll = (Collection<?>) obj;
         collectionSummary.add(new String[]{
@@ -49,3 +51,4 @@ private static void analyzeCollections(Object obj, String path, int level) {
         } catch (IllegalAccessException ignored) {
         }
     }
+}
