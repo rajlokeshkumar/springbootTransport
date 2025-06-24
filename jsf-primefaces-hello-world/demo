@@ -1,0 +1,108 @@
+// =============================================
+// Call‑by‑Value vs Call‑by‑Reference demo (complete)
+// Now also demonstrates a List field inside Employee to show that
+// aliasing one reference variable to another affects the same object.
+// Requires only the standard JDK (17+).
+// =============================================
+
+// ------------ Employee.java ------------
+import java.util.*;
+
+public class Employee {
+    private int id;
+    private String name;
+    private final List<String> tasks;          // NEW: mutable list field
+
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.tasks = new ArrayList<>();        // start empty
+    }
+
+    /* business methods */
+    public void setName(String name) { this.name = name; }
+    public List<String> getTasks() { return tasks; }   // expose list reference
+
+    @Override public String toString() {
+        return "[id=" + id + ", name=" + name + ", tasks=" + tasks + "]";
+    }
+}
+
+// ------------ Wrapper.java (generic) ------------
+public class Wrapper<T> {
+    public T value;                // deliberately public for teaching demo
+    public Wrapper(T value) { this.value = value; }
+    @Override public String toString() { return "Wrapper{" + value + "}"; }
+}
+
+// ------------ CallByDemo.java ------------
+import java.util.*;
+
+public class CallByDemo {
+
+    /* ---------- LIST helpers ---------- */
+    static void addElement(List<String> list) { list.add("★ added inside"); }
+    static void reassignList(List<String> list) {
+        list = new ArrayList<>(); list.add("★ new list inside"); }
+
+    /* ---------- MAP helpers ---------- */
+    static void putEntry(Map<Integer,String> map) { map.put(99,"★ inserted"); }
+    static void reassignMap(Map<Integer,String> map) {
+        map = new HashMap<>(); map.put(100,"★ new map inside"); }
+
+    /* ---------- STRING helper ---------- */
+    static void mutateString(String s) { s = s.toUpperCase(); }
+
+    /* ---------- Employee helpers ---------- */
+    static void changeName(Employee e) { e.setName("★ Changed"); }
+    static void reassignEmployee(Employee e) { e = new Employee(2,"★ New Guy"); }
+
+    /* ---------- Wrapper<Employee> helper ---------- */
+    static void replaceViaWrapper(Wrapper<Employee> w) {
+        w.value = new Employee(3,"★ Replaced Through Wrapper"); }
+
+    /* ---------- Wrapper<String> helpers ---------- */
+    static void upperCaseWrapped(Wrapper<String> w) {
+        w.value = w.value.toUpperCase(); }
+    static void reassignWrapper(Wrapper<String> w) {
+        w = new Wrapper<>("★ brand‑new wrapper"); }
+
+    public static void main(String[] args) {
+        // 1) LIST scenario
+        List<String> list = new ArrayList<>(List.of("one","two"));
+        addElement(list); reassignList(list);
+        System.out.println("List      -> " + list);
+
+        // 2) MAP scenario
+        Map<Integer,String> map = new HashMap<>(Map.of(1,"A"));
+        putEntry(map); reassignMap(map);
+        System.out.println("Map       -> " + map);
+
+        // 3) STRING scenario
+        String text = "hello";
+        mutateString(text);
+        System.out.println("String    -> " + text);
+
+        // 4) Employee direct scenario
+        Employee emp = new Employee(1,"Raj");
+        changeName(emp); reassignEmployee(emp);
+        System.out.println("Employee  -> " + emp);
+
+        // 5) Employee wrapped scenario
+        Wrapper<Employee> empBox = new Wrapper<>(new Employee(9,"Boxed"));
+        replaceViaWrapper(empBox);
+        System.out.println("EmpWrap   -> " + empBox);
+
+        // 6) String wrapped scenario
+        Wrapper<String> strBox = new Wrapper<>("hello boxed");
+        upperCaseWrapped(strBox); reassignWrapper(strBox);
+        System.out.println("StrWrap   -> " + strBox);
+
+        // 7) NEW: List inside Employee aliasing scenario
+        System.out.println("--- Alias demo on Employee.tasks ---");
+        List<String> alias = emp.getTasks();   // obtain SAME list reference
+        alias.add("★ task added via alias");  // mutate through alias
+        System.out.println("Alias     -> " + alias);
+        System.out.println("Employee  -> " + emp);   // tasks list shows change
+    }
+}
