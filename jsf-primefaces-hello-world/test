@@ -138,3 +138,17 @@ public class ObjectComparator {
                 clazz == Character.class;
     }
 }
+
+
+
+👉 https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.11/org.jacoco.cli-0.8.11-nodeps.jar
+
+➕ Step 2: Generate Report
+bash
+Copy
+Edit
+java -jar jacococli.jar report jacoco.exec \
+  --classfiles target/classes \
+  --sourcefiles src/main/java \
+  --html report-html
+
