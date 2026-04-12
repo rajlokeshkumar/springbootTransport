@@ -10,7 +10,7 @@
 
 	<name>jsf-primefaces-hello-world</name>
 	<description>JSF PrimeFaces Hello World Example</description>
-	<url>https://codenotfound.com/jsf-primefaces-example.html</url>
+	<url>https://github.com/rajlokeshkumar</url>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
